@@ -24,19 +24,36 @@ interface PlantStore {
   getPlantById: (plantId: string) => Plant | undefined
 }
 
-const createNewPlant = (type: PlantType): Plant => ({
-  id: `plant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-  name: `My ${type}`,
-  type,
-  growthStage: GrowthStage.SEED,
-  health: 100,
-  growthProgress: 0,
-  loveLevel: 0,
-  lastWatered: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-  lastSunExposure: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  lastTalk: new Date(Date.now() - 24 * 60 * 60 * 1000),
-  createdAt: new Date()
-})
+const createNewPlant = (type: PlantType): Plant => {
+  const plantId = `plant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  
+  // 植物タイプ別のランダムな名前
+  const getRandomName = (plantType: PlantType): string => {
+    const names = {
+      [PlantType.PACHIRA]: ['みどりちゃん', 'パッチー', 'リーフィ', 'わかば'],
+      [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
+      [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
+      [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
+      [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート']
+    }
+    const typeNames = names[plantType] || ['みどりちゃん']
+    return typeNames[Math.floor(Math.random() * typeNames.length)]
+  }
+
+  return {
+    id: plantId,
+    name: getRandomName(type),
+    type,
+    growthStage: GrowthStage.SEED,
+    health: Math.floor(Math.random() * 40) + 60, // 60-100でランダム
+    growthProgress: Math.floor(Math.random() * 30), // 0-30でランダム
+    loveLevel: Math.floor(Math.random() * 3), // 0-2でランダム
+    lastWatered: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000), // 0-3日前
+    lastSunExposure: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000),
+    lastTalk: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000),
+    createdAt: new Date()
+  }
+}
 
 export const usePlantStore = create<PlantStore>()(
   persist(
@@ -188,7 +205,40 @@ export const usePlantStore = create<PlantStore>()(
     }),
     {
       name: 'liquid-garden-storage',
-      version: 1
+      version: 3, // バージョンを上げて既存のデータをクリア
+      // Dateオブジェクトの適切な処理
+      partialize: (state) => ({
+        plants: state.plants,
+        careHistory: state.careHistory,
+        selectedPlant: state.selectedPlant
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // 文字列からDateオブジェクトに変換
+          state.plants = state.plants.map(plant => ({
+            ...plant,
+            lastWatered: new Date(plant.lastWatered),
+            lastSunExposure: new Date(plant.lastSunExposure),
+            lastTalk: new Date(plant.lastTalk),
+            createdAt: new Date(plant.createdAt)
+          }))
+          
+          if (state.selectedPlant) {
+            state.selectedPlant = {
+              ...state.selectedPlant,
+              lastWatered: new Date(state.selectedPlant.lastWatered),
+              lastSunExposure: new Date(state.selectedPlant.lastSunExposure),
+              lastTalk: new Date(state.selectedPlant.lastTalk),
+              createdAt: new Date(state.selectedPlant.createdAt)
+            }
+          }
+          
+          state.careHistory = state.careHistory.map(care => ({
+            ...care,
+            timestamp: new Date(care.timestamp)
+          }))
+        }
+      }
     }
   )
 )

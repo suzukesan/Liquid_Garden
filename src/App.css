@@ -1,42 +1,103 @@
+/* Liquid Garden レイアウト */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* メインコンテンツエリア */
+.main-container {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Liquid Garden専用スタイル */
+
+/* ガラス効果のアニメーション */
+@keyframes liquid-wave {
+  0% {
+    transform: translateX(-100%) rotate(0deg);
   }
-  to {
-    transform: rotate(360deg);
+  50% {
+    transform: translateX(50%) rotate(180deg);
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  100% {
+    transform: translateX(100%) rotate(360deg);
   }
 }
 
-.card {
-  padding: 2em;
+@keyframes liquid-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
 }
 
-.read-the-docs {
-  color: #888;
+/* パーティクルエフェクト */
+@keyframes particle-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-40px) rotate(20deg);
+    opacity: 0.1;
+  }
+}
+
+/* Liquid Glass専用エフェクト */
+.liquid-glass-wave {
+  animation: liquid-wave 4s ease-in-out infinite;
+}
+
+.liquid-float {
+  animation: liquid-float 6s ease-in-out infinite;
+}
+
+.particle-effect {
+  animation: particle-float 8s ease-in-out infinite;
+}
+
+/* スクロールバーのカスタマイズ */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* 植物カード専用スタイル */
+.plant-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plant-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .liquid-glass {
+    backdrop-filter: blur(12px);
+  }
 }

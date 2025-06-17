@@ -57,14 +57,14 @@ const LiquidGlass: React.FC<LiquidGlassProps> = ({
   }
 
   const animationVariants = {
-    initial: { scale: 1, rotateY: 0 },
-    hover: {
-      scale: 1.05,
-      rotateY: 5,
-    },
-    tap: {
-      scale: 0.95,
-      rotateY: -2,
+      initial: { scale: 1, rotateY: 0 },
+      hover: {
+        scale: 1.05,
+        rotateY: 5,
+      },
+      tap: {
+        scale: 0.95,
+        rotateY: -2,
     }
   }
 
