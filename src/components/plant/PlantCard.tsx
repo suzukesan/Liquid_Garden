@@ -83,7 +83,6 @@ const PlantCard: React.FC<PlantCardProps> = ({ plant, className }) => {
       className={className}
       glassColor={config.liquidGlassEffect.color}
       effect={config.liquidGlassEffect.effect as any}
-      pattern={config.liquidGlassEffect.pattern as any}
       isHovered={isHovered}
       onClick={() => setIsHovered(!isHovered)}
     >

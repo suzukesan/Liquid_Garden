@@ -12,21 +12,25 @@ export interface Plant {
   createdAt: Date
 }
 
-export enum PlantType {
-  PACHIRA = 'pachira',
-  SANSEVIERIA = 'sansevieria', 
-  RUBBER_TREE = 'rubber_tree',
-  KENTIA_PALM = 'kentia_palm',
-  MONSTERA = 'monstera'
-}
+export const PlantType = {
+  PACHIRA: 'pachira',
+  SANSEVIERIA: 'sansevieria', 
+  RUBBER_TREE: 'rubber_tree',
+  KENTIA_PALM: 'kentia_palm',
+  MONSTERA: 'monstera'
+} as const
 
-export enum GrowthStage {
-  SEED = 'seed',
-  SPROUT = 'sprout',
-  SMALL_LEAVES = 'small_leaves',
-  LARGE_LEAVES = 'large_leaves',
-  FLOWER = 'flower'
-}
+export type PlantType = typeof PlantType[keyof typeof PlantType]
+
+export const GrowthStage = {
+  SEED: 'seed',
+  SPROUT: 'sprout',
+  SMALL_LEAVES: 'small_leaves',
+  LARGE_LEAVES: 'large_leaves',
+  FLOWER: 'flower'
+} as const
+
+export type GrowthStage = typeof GrowthStage[keyof typeof GrowthStage]
 
 export interface PlantCareAction {
   id: string
@@ -36,11 +40,13 @@ export interface PlantCareAction {
   value?: number
 }
 
-export enum CareActionType {
-  WATER = 'water',
-  SUN_EXPOSURE = 'sun_exposure',
-  TALK = 'talk'
-}
+export const CareActionType = {
+  WATER: 'water',
+  SUN_EXPOSURE: 'sun_exposure',
+  TALK: 'talk'
+} as const
+
+export type CareActionType = typeof CareActionType[keyof typeof CareActionType]
 
 export interface PlantConfig {
   name: string

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { Plant, PlantType, GrowthStage, PlantCareAction } from '@/types/plant'
+import { Plant, PlantType, GrowthStage, PlantCareAction, CareActionType } from '@/types/plant'
 
 interface PlantStore {
   plants: Plant[]
@@ -84,7 +84,7 @@ export const usePlantStore = create<PlantStore>()(
             {
               id: `care-${Date.now()}`,
               plantId,
-              action: 'water' as const,
+              action: CareActionType.WATER,
               timestamp: now
             }
           ]
@@ -109,7 +109,7 @@ export const usePlantStore = create<PlantStore>()(
             {
               id: `care-${Date.now()}`,
               plantId,
-              action: 'sun_exposure' as const,
+              action: CareActionType.SUN_EXPOSURE,
               timestamp: now
             }
           ]
@@ -133,7 +133,7 @@ export const usePlantStore = create<PlantStore>()(
             {
               id: `care-${Date.now()}`,
               plantId,
-              action: 'talk' as const,
+              action: CareActionType.TALK,
               timestamp: now
             }
           ]
