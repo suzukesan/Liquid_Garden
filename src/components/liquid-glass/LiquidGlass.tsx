@@ -56,25 +56,15 @@ const LiquidGlass: React.FC<LiquidGlassProps> = ({
     }
   }
 
-  const getAnimationVariants = () => {
-    return {
-      initial: { scale: 1, rotateY: 0 },
-      hover: {
-        scale: 1.05,
-        rotateY: 5,
-        transition: {
-          duration: 0.3,
-          ease: 'easeOut'
-        }
-      },
-      tap: {
-        scale: 0.95,
-        rotateY: -2,
-        transition: {
-          duration: 0.1,
-          ease: 'easeInOut'
-        }
-      }
+  const animationVariants = {
+    initial: { scale: 1, rotateY: 0 },
+    hover: {
+      scale: 1.05,
+      rotateY: 5,
+    },
+    tap: {
+      scale: 0.95,
+      rotateY: -2,
     }
   }
 
@@ -85,7 +75,7 @@ const LiquidGlass: React.FC<LiquidGlassProps> = ({
         className
       )}
       style={getEffectStyles()}
-      variants={getAnimationVariants()}
+      variants={animationVariants}
       initial="initial"
       whileHover="hover"
       whileTap="tap"
