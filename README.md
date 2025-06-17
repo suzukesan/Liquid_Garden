@@ -1,28 +1,74 @@
-# React + TypeScript + Vite
+# Liquid Garden
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 植物育成Webアプリケーション
 
-Currently, two official plugins are available:
+**Liquid Glass UIを活用した癒し系植物育成アプリ**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🌱 プロジェクト概要
 
-## Expanding the ESLint configuration
+- **アプリ名**: Liquid Garden
+- **プラットフォーム**: Web（純粋なWebアプリケーション）
+- **コンセプト**: Liquid Glass UIを活用した癒し系植物育成アプリ
+- **ターゲット**: 癒しを求める植物愛好家、コードベースデザイン重視の開発者
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🛠️ 技術スタック
+
+**メインフレームワーク**
+- React 19 + TypeScript
+- Vite（高速開発サーバー）
+
+**UIライブラリ**
+- shadcn/ui（Radix Primitives + Tailwind CSSベース）
+- 完全カスタマイズ可能、コンポーネント所有権概念
+
+**Liquid Glass実装**
+- gracefullight/liquid-glass（React & Tailwind専用）
+- albedim/apple-web-liquid-glass-demo（iOS 26スタイル）
+
+**アニメーション・状態管理**
+- Framer Motion：流動的なアニメーション
+- Zustand：軽量状態管理
+- React Query：データフェッチとキャッシュ
+
+**デプロイ環境**
+- Vercel（ゼロ設定自動デプロイ、エッジ配信）
+
+### 🌟 主な機能
+
+- 植物の育成（水やり、日光浴、話しかけ）
+- Liquid Glass UI エフェクト
+- 成長段階システム
+- 健康度・愛情レベル管理
+- インタラクティブなアニメーション
+
+### 🚀 開発環境セットアップ
+
+```bash
+# 依存関係インストール
+npm install
+
+# 開発サーバー起動
+npm run dev
+
+# ビルド
+npm run build
+
+# プレビュー
+npm run preview
+```
+
+### 📦 ESLint設定の拡張
+
+本格的なプロダクション環境での開発には、型対応のlintルールの有効化を推奨：
 
 ```js
 export default tseslint.config({
   extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
     ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
     ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
     ...tseslint.configs.stylisticTypeChecked,
   ],
   languageOptions: {
-    // other options...
     parserOptions: {
       project: ['./tsconfig.node.json', './tsconfig.app.json'],
       tsconfigRootDir: import.meta.dirname,
@@ -31,24 +77,8 @@ export default tseslint.config({
 })
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🎯 開発状況
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+現在MVP（Minimum Viable Product）開発段階です。基本的な植物育成機能とLiquid Glass UIエフェクトが実装済み。
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+詳細な開発進捗は`TODO.md`をご参照ください。
