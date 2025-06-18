@@ -5,6 +5,7 @@ import { usePlantStore } from '@/stores/plantStore'
 import { Plant, PlantType, GrowthStage } from '@/types/plant'
 import { generatePlantPersonality, generatePlantColors, getPlantStateModifiers } from '@/utils/plantPersonality'
 import { useSoundEffects } from '@/hooks/useSoundEffects'
+import PlantArtDisplay from './PlantArtDisplay'
 import PlantActions from './PlantActions'
 import ConfirmModal from '../ui/ConfirmModal'
 
@@ -76,9 +77,9 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                    plant.loveLevel < 4 ? 'あなたの声を待ってるみたい' : 
                    'あなたの声が大好きです',
         lastCareText: timeSinceTalk < 1 ? '今日' : `${Math.floor(timeSinceTalk)}日前`,
-        urgency: plant.loveLevel < 2 ? 'urgent' : plant.loveLevel < 4 ? 'needed' : 'satisfied',
-        isActive: plant.loveLevel < 5, // 最大レベル未満なら常に活性化
-        emoji: plant.loveLevel < 2 ? '😢' : plant.loveLevel < 4 ? '🥺' : '🥰'
+                  urgency: plant.loveLevel < 40 ? 'urgent' : plant.loveLevel < 80 ? 'needed' : 'satisfied',
+        isActive: plant.loveLevel < 100, // 最大レベル未満なら常に活性化
+                  emoji: plant.loveLevel < 40 ? '😢' : plant.loveLevel < 80 ? '🥺' : '🥰'
       }
     }
   }
@@ -345,12 +346,12 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 filter: plant.health < 30 ? 'grayscale(0.2) brightness(0.9)' : 'none'
               }}
             >
-              {/* 植物の主要アイコン - 生命の呼吸 */}
+              {/* 植物のAAアート - 生命の呼吸 */}
               <motion.div
-                className="text-8xl mb-4 inline-block"
+                className="mb-6 inline-block"
                 animate={!isPlantReacting ? {
-                  scale: [1, 1.03, 1],
-                  rotate: [0, 1, -1, 0]
+                  scale: [1, 1.02, 1],
+                  rotate: [0, 0.5, -0.5, 0]
                 } : {}}
                 transition={{
                   duration: 4,
@@ -358,7 +359,16 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                   ease: "easeInOut"
                 }}
               >
-                {growth.emoji}
+                <PlantArtDisplay 
+                  plant={plant} 
+                  size="large" 
+                  showDescription={true}
+                  className="mb-4"
+                />
+                {/* 下に小さな感情絵文字 */}
+                <div className="text-4xl">
+                  {growth.emoji}
+                </div>
               </motion.div>
 
               {/* 生命反応エフェクト */}

@@ -5,7 +5,7 @@ export interface Plant {
   growthStage: GrowthStage
   health: number // 0-100
   growthProgress: number // 0-100 for current stage
-  loveLevel: number // 0-5
+  loveLevel: number // 0-100
   lastWatered: Date
   lastSunExposure: Date
   lastTalk: Date

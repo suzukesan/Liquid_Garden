@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Volume2, VolumeX } from 'lucide-react'
+import { Plus, Volume2, VolumeX, Settings } from 'lucide-react'
 import { usePlantStore } from '@/stores/plantStore'
 import { useSoundEffects } from '@/hooks/useSoundEffects'
 import { Plant, PlantType } from '@/types/plant'
 import PlantCard from '@/components/plant/PlantCard'
 import PlantDetailView from '@/components/plant/PlantDetailView'
+import PlantTypeSelector from '@/components/plant/PlantTypeSelector'
+import SettingsPanel from '@/components/ui/SettingsPanel'
 
 const BentoGarden: React.FC = () => {
   const { plants, addPlant } = usePlantStore()
@@ -20,6 +22,8 @@ const BentoGarden: React.FC = () => {
   const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [transitionOrigin, setTransitionOrigin] = useState({ x: 0, y: 0 })
+  const [showPlantSelector, setShowPlantSelector] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
 
   // 時間帯の検出
   const [timeOfDay, setTimeOfDay] = useState<'morning' | 'day' | 'evening'>('day')
@@ -90,8 +94,29 @@ const BentoGarden: React.FC = () => {
   }
 
   const handleAddPlant = () => {
+    playUISound('click')
+    setShowPlantSelector(true)
+  }
+
+  const handlePlantTypeSelect = (type: PlantType) => {
     playUISound('success')
-    addPlant(PlantType.PACHIRA)
+    addPlant(type)
+    setShowPlantSelector(false)
+  }
+
+  const handleCancelPlantSelection = () => {
+    playUISound('click')
+    setShowPlantSelector(false)
+  }
+
+  const handleOpenSettings = () => {
+    playUISound('click')
+    setShowSettings(true)
+  }
+
+  const handleCloseSettings = () => {
+    playUISound('click')
+    setShowSettings(false)
   }
 
   // 環境音の制御
@@ -549,32 +574,75 @@ const BentoGarden: React.FC = () => {
         )}
       </div>
 
-      {/* 音響制御ボタン */}
-      <motion.button
-        onClick={toggleAmbientSound}
-        className="fixed top-6 right-6 z-20 p-4 rounded-full shadow-lg"
-        style={{
-          background: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255, 255, 255, 0.3)'
-        }}
-        whileHover={{ 
-          scale: 1.1, 
-          background: 'rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-        }}
-        whileTap={{ scale: 0.9 }}
-        onHoverStart={() => playUISound('hover')}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 1 }}
-      >
-        {isAmbientPlaying ? (
-          <Volume2 size={24} className="text-blue-600" />
-        ) : (
-          <VolumeX size={24} className="text-gray-600" />
+      {/* コントロールボタン群 */}
+      <div className="fixed top-6 right-6 z-20 flex flex-col space-y-3">
+        {/* 設定ボタン */}
+        <motion.button
+          onClick={handleOpenSettings}
+          className="p-4 rounded-full shadow-lg"
+          style={{
+            background: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)'
+          }}
+          whileHover={{ 
+            scale: 1.1, 
+            background: 'rgba(255, 255, 255, 0.9)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}
+          whileTap={{ scale: 0.9 }}
+          onHoverStart={() => playUISound('hover')}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 1.1 }}
+        >
+          <Settings size={24} className="text-blue-600" />
+        </motion.button>
+
+        {/* 音響制御ボタン */}
+        <motion.button
+          onClick={toggleAmbientSound}
+          className="p-4 rounded-full shadow-lg"
+          style={{
+            background: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)'
+          }}
+          whileHover={{ 
+            scale: 1.1, 
+            background: 'rgba(255, 255, 255, 0.9)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+          }}
+          whileTap={{ scale: 0.9 }}
+          onHoverStart={() => playUISound('hover')}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 1 }}
+        >
+          {isAmbientPlaying ? (
+            <Volume2 size={24} className="text-blue-600" />
+          ) : (
+            <VolumeX size={24} className="text-gray-600" />
+          )}
+        </motion.button>
+      </div>
+
+      {/* 植物タイプ選択ダイアログ */}
+      <AnimatePresence>
+        {showPlantSelector && (
+          <PlantTypeSelector
+            onSelect={handlePlantTypeSelect}
+            onCancel={handleCancelPlantSelection}
+          />
         )}
-      </motion.button>
+      </AnimatePresence>
+
+      {/* 設定パネル */}
+      <AnimatePresence>
+        {showSettings && (
+          <SettingsPanel onClose={handleCloseSettings} />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

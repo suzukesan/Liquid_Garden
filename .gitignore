@@ -26,3 +26,11 @@ dist-ssr
 .qodo
 .specstory
 
+# Documentation files
+*.md
+README.md
+仕様書.md
+案.md
+開発進捗.md
+TODO.md
+

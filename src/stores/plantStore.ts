@@ -47,7 +47,7 @@ const createNewPlant = (type: PlantType): Plant => {
     growthStage: GrowthStage.SEED,
     health: Math.floor(Math.random() * 40) + 60, // 60-100でランダム
     growthProgress: Math.floor(Math.random() * 30), // 0-30でランダム
-    loveLevel: Math.floor(Math.random() * 3), // 0-2でランダム
+    loveLevel: Math.floor(Math.random() * 30) + 20, // 20-50でランダム
     lastWatered: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000), // 0-3日前
     lastSunExposure: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000),
     lastTalk: new Date(Date.now() - Math.random() * 3 * 24 * 60 * 60 * 1000),
@@ -92,7 +92,7 @@ export const usePlantStore = create<PlantStore>()(
                   ...plant,
                   lastWatered: now,
                   health: Math.min(100, plant.health + 10),
-                  loveLevel: Math.min(5, plant.loveLevel + 0.1)
+                  loveLevel: Math.min(100, plant.loveLevel + 2)
                 }
               : plant
           ),
@@ -141,7 +141,7 @@ export const usePlantStore = create<PlantStore>()(
               ? {
                   ...plant,
                   lastTalk: now,
-                  loveLevel: Math.min(5, plant.loveLevel + 0.2)
+                  loveLevel: Math.min(100, plant.loveLevel + 5)
                 }
               : plant
           ),

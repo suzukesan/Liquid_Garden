@@ -90,7 +90,7 @@ export const generatePlantPersonality = (plant: Plant): PlantPersonality => {
 // 植物の状態に基づく動的な表現調整
 export const getPlantStateModifiers = (plant: Plant, personality: PlantPersonality) => {
   const healthRatio = plant.health / 100
-  const happinessRatio = plant.loveLevel / 5
+  const happinessRatio = plant.loveLevel / 100
   
   return {
     // 健康状態による調整
