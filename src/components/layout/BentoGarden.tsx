@@ -11,7 +11,7 @@ import PlantTypeSelector from '@/components/plant/PlantTypeSelector'
 import SettingsPanel from '@/components/ui/SettingsPanel'
 
 const BentoGarden: React.FC = () => {
-  const { plants, addPlant, language } = usePlantStore()
+  const { plants, addPlant, language, theme } = usePlantStore()
   const { 
     playUISound, 
     startAmbientSound, 
@@ -132,8 +132,20 @@ const BentoGarden: React.FC = () => {
 
   // 時間帯に応じた背景スタイル - より大胆なコントラスト
   const getTimeBasedBackground = () => {
+    if (theme === 'dark') {
+      return {
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+        overlay: 'rgba(0, 0, 0, 0.4)'
+      }
+    }
+
+    if (theme === 'light') {
+      // 明示的にライトテーマの場合は夜でも鮮やかなグラデーションを使用
+      // (auto と同一処理)
+    }
+
     const hour = new Date().getHours()
-    
+
     if (hour >= 6 && hour < 12) {
       // 朝：鮮やかなグラデーション
       return {

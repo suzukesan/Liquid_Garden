@@ -10,11 +10,10 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const { plants, language, setLanguage } = usePlantStore()
+  const { plants, language, setLanguage, theme, setTheme } = usePlantStore()
   const { volume, setMasterVolume, playUISound } = useSoundEffects()
   
   const [notifications, setNotifications] = useState(true)
-  const [theme, setTheme] = useState<'auto' | 'light' | 'dark'>('auto')
 
   const handleNotificationToggle = () => {
     setNotifications(!notifications)
@@ -69,7 +68,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.div
-        className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 max-w-2xl w-full border border-white/30 max-h-[90vh] overflow-y-auto"
+        className="bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-3xl p-8 max-w-2xl w-full border border-white/30 dark:border-white/10 max-h-[90vh] overflow-y-auto"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
@@ -85,7 +84,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           </div>
           <motion.button
             onClick={onClose}
-            className="p-2 rounded-full bg-white/20 hover:bg-white/30"
+            className="p-2 rounded-full bg-white/20 dark:bg-black/30 hover:bg-white/30 dark:hover:bg-black/40"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
           >
@@ -95,15 +94,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
 
         <div className="space-y-8">
           {/* 通知設定 */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
               <Bell className="w-6 h-6 text-yellow-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t('settings.notifications', language)}
               </h3>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">
+              <span className="text-gray-700 dark:text-gray-200">
                 {t('notification.care_reminders', language)}
               </span>
               <motion.button
@@ -123,10 +122,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           </div>
 
           {/* テーマ設定 */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
               <Palette className="w-6 h-6 text-purple-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t('settings.theme', language)}
               </h3>
             </div>
@@ -141,14 +140,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   onClick={() => handleThemeChange(option.value as any)}
                   className={`p-3 rounded-xl border-2 text-center ${
                     theme === option.value
-                      ? 'border-blue-500 bg-blue-50/80'
-                      : 'border-white/30 bg-white/10'
+                      ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-900/40'
+                      : 'border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/10'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="text-2xl mb-1">{option.icon}</div>
-                  <div className="text-sm font-medium text-gray-700">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                     {option.label}
                   </div>
                 </motion.button>
@@ -157,10 +156,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           </div>
 
           {/* 言語設定 */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
               <Globe className="w-6 h-6 text-green-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t('settings.language', language)}
               </h3>
             </div>
@@ -174,14 +173,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   onClick={() => handleLanguageChange(option.value as any)}
                   className={`p-3 rounded-xl border-2 text-center ${
                     language === option.value
-                      ? 'border-green-500 bg-green-50/80'
-                      : 'border-white/30 bg-white/10'
+                      ? 'border-green-500 bg-green-50/80 dark:bg-green-900/30'
+                      : 'border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/10'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <div className="text-2xl mb-1">{option.flag}</div>
-                  <div className="text-sm font-medium text-gray-700">
+                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200">
                     {option.label}
                   </div>
                 </motion.button>
@@ -190,15 +189,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           </div>
 
           {/* 音量設定 */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
               <Volume2 className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t('settings.volume', language)}
               </h3>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 w-12">0%</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400 w-12">0%</span>
               <div className="flex-1">
                 <input
                   type="range"
@@ -213,29 +212,29 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   }}
                 />
               </div>
-              <span className="text-sm text-gray-600 w-12">100%</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400 w-12">100%</span>
             </div>
             <div className="text-center mt-2">
-              <span className="text-lg font-bold text-gray-700">
+              <span className="text-lg font-bold text-gray-700 dark:text-gray-200">
                 {Math.round(volume * 100)}%
               </span>
             </div>
           </div>
 
           {/* データエクスポート */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
             <div className="flex items-center space-x-3 mb-4">
               <Download className="w-6 h-6 text-orange-600" />
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 {t('settings.data_export', language)}
               </h3>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               {t('export.description', language)}
             </p>
             <motion.button
               onClick={handleExportData}
-              className="w-full px-6 py-3 bg-orange-500 text-white rounded-xl font-medium"
+              className="w-full px-6 py-3 bg-orange-500 hover:bg-orange-600 dark:hover:bg-orange-600 text-white rounded-xl font-medium"
               whileHover={{ scale: 1.02, backgroundColor: '#f97316' }}
               whileTap={{ scale: 0.98 }}
             >
@@ -244,12 +243,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           </div>
 
           {/* アプリ情報 */}
-          <div className="p-6 rounded-2xl bg-white/10 border border-white/20 text-center">
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 text-center">
             <div className="text-4xl mb-3">🌿</div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
               Liquid Garden
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {t('app.version', language)}
             </p>
           </div>

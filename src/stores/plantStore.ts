@@ -10,6 +10,7 @@ interface PlantStore {
   careHistory: PlantCareAction[]
   selectedPlant: Plant | null
   language: Language // 言語設定を追加
+  theme: 'auto' | 'light' | 'dark' // テーマ設定を追加
   
   // Actions
   addPlant: (type: PlantType) => void
@@ -29,6 +30,8 @@ interface PlantStore {
   
   // Language
   setLanguage: (language: Language) => void // 言語設定関数を追加
+  // Theme
+  setTheme: (theme: 'auto' | 'light' | 'dark') => void // テーマ設定関数を追加
 }
 
 const createNewPlant = (type: PlantType): Plant => {
@@ -69,6 +72,7 @@ export const usePlantStore = create<PlantStore>()(
       careHistory: [],
       selectedPlant: null,
       language: 'ja', // デフォルトは日本語
+      theme: 'auto', // テーマは自動
 
       addPlant: (type: PlantType) => {
         const newPlant = createNewPlant(type)
@@ -213,16 +217,22 @@ export const usePlantStore = create<PlantStore>()(
 
       setLanguage: (language: Language) => {
         set({ language })
+      },
+
+      setTheme: (theme: 'auto' | 'light' | 'dark') => {
+        set({ theme })
       }
     }),
     {
       name: 'liquid-garden-storage',
-      version: 3, // バージョンを上げて既存のデータをクリア
+      version: 4, // バージョンを上げて既存のデータをクリア
       // Dateオブジェクトの適切な処理
       partialize: (state) => ({
         plants: state.plants,
         careHistory: state.careHistory,
-        selectedPlant: state.selectedPlant
+        selectedPlant: state.selectedPlant,
+        theme: state.theme,
+        language: state.language
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

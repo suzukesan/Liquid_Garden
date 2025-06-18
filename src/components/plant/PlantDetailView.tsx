@@ -435,11 +435,11 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 transition={{ duration: 4, repeat: Infinity }}
               >
                 <span>{deepState.mood}</span>
-                <span className="text-gray-600 italic">{deepState.text}</span>
+                <span className="text-gray-600 dark:text-gray-300 italic">{deepState.text}</span>
               </motion.div>
 
               <motion.p 
-                className="text-gray-600 italic"
+                className="text-gray-600 dark:text-gray-300 italic"
                 animate={{ opacity: [0.7, 1, 0.7] }}
                 transition={{ duration: 5, repeat: Infinity }}
               >
@@ -505,7 +505,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 }`}>
                   {emotionalCare.water.emoji} {emotionalCare.water.statusText}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   最後の水やり: {emotionalCare.water.lastCareText}
                 </p>
               </div>
@@ -564,7 +564,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 }`}>
                   {emotionalCare.sun.emoji} {emotionalCare.sun.statusText}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   最後の日光浴: {emotionalCare.sun.lastCareText}
                 </p>
               </div>
@@ -623,7 +623,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 }`}>
                   {emotionalCare.talk.emoji} {emotionalCare.talk.statusText}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   最後の会話: {emotionalCare.talk.lastCareText}
                 </p>
               </div>
@@ -648,7 +648,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             
             <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-3 rounded-2xl bg-white bg-opacity-50">
-                <p className="text-xs text-gray-600 mb-1">健康状態</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">健康状態</p>
                 <p className="text-lg font-bold text-green-600">
                   {plant.health >= 80 ? '✨ とても元気' :
                    plant.health >= 60 ? '😊 元気' :
@@ -657,7 +657,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
               </div>
               
               <div className="p-3 rounded-2xl bg-white bg-opacity-50">
-                <p className="text-xs text-gray-600 mb-1">成長段階</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">成長段階</p>
                 <p className="text-lg font-bold text-blue-600">
                   {plant.growthStage === 'small_leaves' ? '若葉' :
                    plant.growthStage === 'large_leaves' ? '成熟' : '開花'}

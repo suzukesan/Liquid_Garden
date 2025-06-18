@@ -54,16 +54,24 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
     }
   }
 
-  // 植物名翻訳
-  const translatePlantName = (type: string) => {
+  // 植物名翻訳 (PlantType はすべて小文字スネークケース)
+  const translatePlantName = (type: PlantType) => {
     switch (type) {
-      case 'PACHIRA': return t('plant.pachira', language)
-      case 'SANSEVIERIA': return t('plant.sansevieria', language)
-      case 'RUBBER_TREE': return t('plant.rubber_tree', language)
-      case 'KENTIA_PALM': return t('plant.kentia_palm', language)
-      case 'MONSTERA': return t('plant.monstera', language)
+      case PlantType.PACHIRA: return t('plant.pachira', language)
+      case PlantType.SANSEVIERIA: return t('plant.sansevieria', language)
+      case PlantType.RUBBER_TREE: return t('plant.rubber_tree', language)
+      case PlantType.KENTIA_PALM: return t('plant.kentia_palm', language)
+      case PlantType.MONSTERA: return t('plant.monstera', language)
       default: return type
     }
+  }
+
+  const iconMap: Record<PlantType, string> = {
+    [PlantType.PACHIRA]: '🌿',
+    [PlantType.SANSEVIERIA]: '🪴',
+    [PlantType.RUBBER_TREE]: '🌳',
+    [PlantType.KENTIA_PALM]: '🌴',
+    [PlantType.MONSTERA]: '🍃'
   }
 
   return (
@@ -75,17 +83,17 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
       onClick={(e) => e.target === e.currentTarget && onCancel()}
     >
       <motion.div
-        className="bg-white/20 backdrop-blur-xl rounded-3xl p-8 max-w-4xl w-full border border-white/30 max-h-[90vh] overflow-y-auto"
+        className="bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-3xl p-8 max-w-4xl w-full border border-white/30 dark:border-white/10 max-h-[90vh] overflow-y-auto"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
             {t('select.plant.title', language)}
           </h2>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             {t('select.plant.subtitle', language)}
           </p>
         </div>
@@ -96,8 +104,8 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
               key={type}
               className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
                 selectedType === type
-                  ? 'border-green-500 bg-green-50/80'
-                  : 'border-white/30 bg-white/10 hover:bg-white/20'
+                  ? 'border-green-500 bg-green-50/80 dark:bg-green-900/40'
+                  : 'border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/20 hover:bg-white/20 dark:hover:bg-black/30'
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -108,22 +116,18 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                   className="text-5xl mb-4"
                   style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
                 >
-                  {type === 'PACHIRA' ? '🌿' : 
-                   type === 'SANSEVIERIA' ? '🪴' :
-                   type === 'RUBBER_TREE' ? '🌳' :
-                   type === 'KENTIA_PALM' ? '🌴' :
-                   type === 'MONSTERA' ? '🍃' : '🌱'}
+                  {iconMap[type as PlantType] ?? '🌱'}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  {translatePlantName(type)}
+                <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                  {translatePlantName(type as PlantType)}
                 </h3>
                 
                 {/* 特徴 */}
                 <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     {t('characteristics', language)}
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     {translateCharacteristics(config.characteristics).join(' • ')}
                   </p>
                 </div>
@@ -131,18 +135,18 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                 {/* ケア要件 */}
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-gray-700 dark:text-gray-200 font-medium">
                       {t('growth.speed', language)}:
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">
                       {translateGrowthSpeed(config.growthSpeed)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-gray-700 dark:text-gray-200 font-medium">
                       {t('water.frequency', language)}:
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">
                       {config.careRequirements.waterFrequency === 1 
                         ? t('water.daily', language)
                         : language === 'ja' 
@@ -152,10 +156,10 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-gray-700 dark:text-gray-200 font-medium">
                       {t('sun.requirement', language)}:
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">
                       {language === 'ja' 
                         ? `${config.careRequirements.sunRequirement}${t('sun.hours', language)}`
                         : `${config.careRequirements.sunRequirement} ${t('sun.hours', language)}`
@@ -163,10 +167,10 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-700 font-medium">
+                    <span className="text-gray-700 dark:text-gray-200 font-medium">
                       {t('talk.bonus', language)}:
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">
                       {config.careRequirements.talkBonus 
                         ? t('talk.effective', language)
                         : t('talk.not_much', language)
