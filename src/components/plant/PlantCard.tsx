@@ -6,6 +6,7 @@ import { generatePlantPersonality, generatePlantColors, getPlantStateModifiers }
 import { useSoundEffects } from '@/hooks/useSoundEffects'
 import PlantActions from './PlantActions'
 import { ChevronRight, Heart } from 'lucide-react'
+import { t } from '@/utils/i18n'
 
 interface PlantCardProps {
   plant: Plant
@@ -14,7 +15,7 @@ interface PlantCardProps {
 }
 
 const PlantCard: React.FC<PlantCardProps> = React.memo(({ plant, size = 'medium', onClick }) => {
-  const { removePlant } = usePlantStore()
+  const { removePlant, language } = usePlantStore()
   const { playRippleSound, playUISound, playPlantHeartbeat } = useSoundEffects()
   const [isHovered, setIsHovered] = useState(false)
   const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([])
@@ -268,6 +269,23 @@ const PlantCard: React.FC<PlantCardProps> = React.memo(({ plant, size = 'medium'
     return urgentActions[0] // 最も緊急なアクションを返す
   }, [plant.lastWatered, plant.lastSunExposure, plant.loveLevel])
 
+  const translatedType = useMemo(() => {
+    switch (plant.type) {
+      case PlantType.PACHIRA:
+        return t('plant.pachira', language)
+      case PlantType.SANSEVIERIA:
+        return t('plant.sansevieria', language)
+      case PlantType.RUBBER_TREE:
+        return t('plant.rubber_tree', language)
+      case PlantType.KENTIA_PALM:
+        return t('plant.kentia_palm', language)
+      case PlantType.MONSTERA:
+        return t('plant.monstera', language)
+      default:
+        return plant.type
+    }
+  }, [plant.type, language])
+
   return (
     <motion.div
       ref={cardRef}
@@ -317,9 +335,10 @@ const PlantCard: React.FC<PlantCardProps> = React.memo(({ plant, size = 'medium'
         {/* ヘッダー部分 - より印象的な階層 */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
-            <h3 className="text-2xl font-bold mb-2 text-gray-800">
+            <h3 className="text-2xl font-bold mb-1 text-gray-800">
               {personalizedName}
             </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{translatedType}</p>
             
             <p className="text-base text-gray-700 leading-relaxed font-medium">
               {growth.poetry}

@@ -31,8 +31,8 @@ export const translations: TranslationDict = {
   'greeting.night.sub': { ja: '静かな夜に、植物たちの成長を見守る特別な時間です 🌙', en: 'A special quiet time to watch your plants grow 🌙' },
   
   // メインタイトル・サブタイトル
-  'subtitle': { ja: '植物たちとの特別な時間を過ごしましょう', en: 'Spend special time with your plants' },
-  'description': { ja: 'デジタルガーデンで育てる、心温まる植物育成体験', en: 'A heartwarming plant growing experience in your digital garden' },
+  'subtitle': { ja: 'デジタルの庭で、あなただけの植物を育てましょう', en: 'Grow your own plants in a digital garden' },
+  'description': { ja: '水やりと日光管理で植物を育て、癒やしの時間を楽しめます', en: 'Water, give sunlight and enjoy a relaxing plant-care journey' },
   'start.button': { ja: '植物を育て始める', en: 'Start Growing Plants' },
   'add.plant': { ja: '新しい植物を追加', en: 'Add New Plant' },
   
@@ -112,7 +112,7 @@ export const translations: TranslationDict = {
   'settings.notifications': { ja: '通知設定', en: 'Notifications' },
   'settings.theme': { ja: 'テーマ設定', en: 'Theme' },
   'settings.language': { ja: '言語設定', en: 'Language' },
-  'settings.volume': { ja: '音量設定', en: 'Volume' },
+  'settings.volume': { ja: 'サウンド (BGM / 効果音)', en: 'Sound (BGM / SFX)' },
   'settings.data_export': { ja: 'データエクスポート', en: 'Data Export' },
   
   'notification.care_reminders': { ja: '植物のケア時間をお知らせ', en: 'Plant care reminders' },
@@ -152,6 +152,7 @@ export const translations: TranslationDict = {
   'sun.hours': { ja: '時間', en: 'hours' },
   'talk.effective': { ja: '効果的', en: 'effective' },
   'talk.not_much': { ja: 'あまり効果なし', en: 'not much effect' },
+  'water.interval': { ja: '{num}日ごと', en: 'every {num} days' },
   
   // ASCII Art説明
   'art.seed_state': { ja: '種の状態', en: 'Seed state' },

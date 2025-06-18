@@ -5,6 +5,7 @@ import { usePlantStore } from '@/stores/plantStore'
 import { Plant, PlantType, GrowthStage } from '@/types/plant'
 import { generatePlantPersonality, generatePlantColors, getPlantStateModifiers } from '@/utils/plantPersonality'
 import { useSoundEffects } from '@/hooks/useSoundEffects'
+import { t } from '@/utils/i18n'
 import PlantArtDisplay from './PlantArtDisplay'
 import PlantActions from './PlantActions'
 import ConfirmModal from '../ui/ConfirmModal'
@@ -15,7 +16,7 @@ interface PlantDetailViewProps {
 }
 
 const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
-  const { waterPlant, giveSunExposure, talkToPlant, removePlant } = usePlantStore()
+  const { waterPlant, giveSunExposure, talkToPlant, removePlant, language } = usePlantStore()
   const { 
     playWaterSound, 
     playSunlightSound, 
@@ -48,11 +49,11 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     return {
       water: {
         // アクション（常に動詞）
-        actionText: '水をあげる',
+        actionText: t('care.water', language),
         // 現在の状態（植物の気持ち）
-        statusText: timeSinceWater > 2 ? 'のどがからからです...' : 
-                   timeSinceWater > 1 ? 'そろそろお水が飲みたいです' : 
-                   '今はみずみずしいよ',
+        statusText: timeSinceWater > 2 ? t('water.thirsty', language) : 
+                   timeSinceWater > 1 ? t('water.wants', language) : 
+                   t('care.happy', language),
         // 最後のお世話からの経過時間
         lastCareText: timeSinceWater < 1 ? '今日' : `${Math.floor(timeSinceWater)}日前`,
         // 緊急度
@@ -62,20 +63,20 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
         emoji: timeSinceWater > 2 ? '🥵' : timeSinceWater > 1 ? '💧' : '✨'
       },
       sun: {
-        actionText: '日光浴させる',
-        statusText: timeSinceSun > 1 ? 'お日様が恋しいみたい...' : 
-                   timeSinceSun > 0.5 ? 'あたたかい光が欲しそう' : 
-                   '光のシャワーを浴びています',
+        actionText: t('care.sunlight', language),
+        statusText: timeSinceSun > 1 ? t('sun.misses', language) : 
+                   timeSinceSun > 0.5 ? t('sun.wants', language) : 
+                   t('care.happy', language),
         lastCareText: timeSinceSun < 1 ? '今日' : `${Math.floor(timeSinceSun)}日前`,
         urgency: timeSinceSun > 1 ? 'urgent' : timeSinceSun > 0.5 ? 'needed' : 'satisfied',
         isActive: timeSinceSun > 0.3, // 約8時間経過したら活性化
         emoji: timeSinceSun > 1 ? '🌙' : timeSinceSun > 0.5 ? '🌤️' : '☀️'
       },
       talk: {
-        actionText: '話しかける',
-        statusText: plant.loveLevel < 2 ? 'ひとりぼっちで寂しそう...' : 
-                   plant.loveLevel < 4 ? 'あなたの声を待ってるみたい' : 
-                   'あなたの声が大好きです',
+        actionText: t('care.talk', language),
+        statusText: plant.loveLevel < 40 ? t('talk.lonely', language) : 
+                   plant.loveLevel < 80 ? t('talk.wants', language) : 
+                   t('care.happy', language),
         lastCareText: timeSinceTalk < 1 ? '今日' : `${Math.floor(timeSinceTalk)}日前`,
                   urgency: plant.loveLevel < 40 ? 'urgent' : plant.loveLevel < 80 ? 'needed' : 'satisfied',
         isActive: plant.loveLevel < 100, // 最大レベル未満なら常に活性化

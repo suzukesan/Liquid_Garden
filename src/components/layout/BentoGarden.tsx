@@ -140,10 +140,14 @@ const BentoGarden: React.FC = () => {
     }
 
     if (theme === 'light') {
-      // 明示的にライトテーマの場合は夜でも鮮やかなグラデーションを使用
-      // (auto と同一処理)
+      // ライトテーマでは時間帯に関係なく昼間の明るいグラデーション
+      return {
+        background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 25%, #60a5fa 50%, #3b82f6 75%, #1d4ed8 100%)',
+        overlay: 'rgba(255, 255, 255, 0.2)'
+      }
     }
 
+    // auto テーマの場合のみ時間帯を考慮
     const hour = new Date().getHours()
 
     if (hour >= 6 && hour < 12) {

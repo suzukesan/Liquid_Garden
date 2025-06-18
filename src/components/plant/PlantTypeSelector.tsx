@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { PlantType } from '../../types/plant'
 import { PLANT_CONFIGS } from '../../data/plantConfigs'
 import { usePlantStore } from '../../stores/plantStore'
-import { t } from '../../utils/i18n'
+import { t, tp } from '../../utils/i18n'
 
 interface PlantTypeSelectorProps {
   onSelect: (type: PlantType) => void
@@ -147,11 +147,9 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                       {t('water.frequency', language)}:
                     </span>
                     <span className="text-gray-600 dark:text-gray-300">
-                      {config.careRequirements.waterFrequency === 1 
+                      {config.careRequirements.waterFrequency === 1
                         ? t('water.daily', language)
-                        : language === 'ja' 
-                          ? `${config.careRequirements.waterFrequency}${t('water.every_days', language)}`
-                          : `${t('water.every', language)}${config.careRequirements.waterFrequency}${t('water.every_days', language)}`
+                        : tp('water.interval', language, { num: config.careRequirements.waterFrequency })
                       }
                     </span>
                   </div>

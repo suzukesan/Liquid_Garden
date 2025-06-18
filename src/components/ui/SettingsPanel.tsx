@@ -166,7 +166,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { value: 'ja', label: '日本語', flag: '🇯🇵' },
-                { value: 'en', label: 'English', flag: '🇺🇸' }
+                { value: 'en', label: 'English', flag: '🌐' }
               ].map((option) => (
                 <motion.button
                   key={option.value}
