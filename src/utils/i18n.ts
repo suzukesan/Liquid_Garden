@@ -132,6 +132,13 @@ export const translations: TranslationDict = {
   'plants.waiting': { ja: '匹の植物たちが、あなたを待っています', en: 'plants are waiting for you' },
   'urgent.care': { ja: 'が緊急ケア待ち', en: 'needs urgent care' },
   
+  // 植物名
+  'plant.pachira': { ja: 'パキラ', en: 'Pachira' },
+  'plant.sansevieria': { ja: 'サンスベリア', en: 'Sansevieria' },
+  'plant.rubber_tree': { ja: 'ゴムの木', en: 'Rubber Tree' },
+  'plant.kentia_palm': { ja: 'ケンチャヤシ', en: 'Kentia Palm' },
+  'plant.monstera': { ja: 'モンステラ', en: 'Monstera' },
+  
   // 削除確認
   'delete.title': { ja: 'とのお別れ', en: 'Farewell' },
   'delete.message': { ja: '本当にお別れしますか？一緒に過ごした思い出は永遠に失われてしまいます...', en: 'Are you sure you want to say goodbye? The memories you\'ve shared will be lost forever...' },
@@ -139,7 +146,8 @@ export const translations: TranslationDict = {
   'delete.cancel': { ja: 'もう少し一緒にいる', en: 'Stay Together' },
   
   // 水やり頻度
-  'water.every_days': { ja: '日に1回', en: 'every {days} days' },
+  'water.every_days': { ja: '日に1回', en: ' days' },
+  'water.every': { ja: '', en: 'every ' },
   'water.daily': { ja: '毎日', en: 'daily' },
   'sun.hours': { ja: '時間', en: 'hours' },
   'talk.effective': { ja: '効果的', en: 'effective' },

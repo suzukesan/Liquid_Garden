@@ -54,6 +54,18 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
     }
   }
 
+  // 植物名翻訳
+  const translatePlantName = (type: string) => {
+    switch (type) {
+      case 'PACHIRA': return t('plant.pachira', language)
+      case 'SANSEVIERIA': return t('plant.sansevieria', language)
+      case 'RUBBER_TREE': return t('plant.rubber_tree', language)
+      case 'KENTIA_PALM': return t('plant.kentia_palm', language)
+      case 'MONSTERA': return t('plant.monstera', language)
+      default: return type
+    }
+  }
+
   return (
     <motion.div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
@@ -103,7 +115,7 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                    type === 'MONSTERA' ? '🍃' : '🌱'}
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  {config.name}
+                  {translatePlantName(type)}
                 </h3>
                 
                 {/* 特徴 */}
@@ -133,7 +145,9 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                     <span className="text-gray-600">
                       {config.careRequirements.waterFrequency === 1 
                         ? t('water.daily', language)
-                        : `${config.careRequirements.waterFrequency}${t('water.every_days', language)}`
+                        : language === 'ja' 
+                          ? `${config.careRequirements.waterFrequency}${t('water.every_days', language)}`
+                          : `${t('water.every', language)}${config.careRequirements.waterFrequency}${t('water.every_days', language)}`
                       }
                     </span>
                   </div>
@@ -142,7 +156,10 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                       {t('sun.requirement', language)}:
                     </span>
                     <span className="text-gray-600">
-                      {config.careRequirements.sunRequirement}{t('sun.hours', language)}
+                      {language === 'ja' 
+                        ? `${config.careRequirements.sunRequirement}${t('sun.hours', language)}`
+                        : `${config.careRequirements.sunRequirement} ${t('sun.hours', language)}`
+                      }
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
