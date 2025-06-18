@@ -2,10 +2,14 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Plant, PlantType, GrowthStage, PlantCareAction, CareActionType } from '@/types/plant'
 
+// 言語設定の型を追加
+export type Language = 'ja' | 'en'
+
 interface PlantStore {
   plants: Plant[]
   careHistory: PlantCareAction[]
   selectedPlant: Plant | null
+  language: Language // 言語設定を追加
   
   // Actions
   addPlant: (type: PlantType) => void
@@ -22,6 +26,9 @@ interface PlantStore {
   
   // Utilities
   getPlantById: (plantId: string) => Plant | undefined
+  
+  // Language
+  setLanguage: (language: Language) => void // 言語設定関数を追加
 }
 
 const createNewPlant = (type: PlantType): Plant => {
@@ -61,6 +68,7 @@ export const usePlantStore = create<PlantStore>()(
       plants: [],
       careHistory: [],
       selectedPlant: null,
+      language: 'ja', // デフォルトは日本語
 
       addPlant: (type: PlantType) => {
         const newPlant = createNewPlant(type)
@@ -201,6 +209,10 @@ export const usePlantStore = create<PlantStore>()(
 
       getPlantById: (plantId: string) => {
         return get().plants.find(p => p.id === plantId)
+      },
+
+      setLanguage: (language: Language) => {
+        set({ language })
       }
     }),
     {

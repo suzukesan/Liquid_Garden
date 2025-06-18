@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Volume2, VolumeX, Settings } from 'lucide-react'
 import { usePlantStore } from '@/stores/plantStore'
 import { useSoundEffects } from '@/hooks/useSoundEffects'
+import { t } from '@/utils/i18n'
 import { Plant, PlantType } from '@/types/plant'
 import PlantCard from '@/components/plant/PlantCard'
 import PlantDetailView from '@/components/plant/PlantDetailView'
@@ -10,7 +11,7 @@ import PlantTypeSelector from '@/components/plant/PlantTypeSelector'
 import SettingsPanel from '@/components/ui/SettingsPanel'
 
 const BentoGarden: React.FC = () => {
-  const { plants, addPlant } = usePlantStore()
+  const { plants, addPlant, language } = usePlantStore()
   const { 
     playUISound, 
     startAmbientSound, 
@@ -165,27 +166,26 @@ const BentoGarden: React.FC = () => {
   // 時間帯に応じた挨拶 - より具体的で魅力的
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours()
-    const userName = "あなた" // 将来的にユーザー名を設定可能
     
     if (hour >= 6 && hour < 12) {
       return {
-        main: `おはようございます、${userName}！`,
-        sub: "新しい一日の始まり。植物たちも朝の光を待っています ☀️"
+        main: t('greeting.morning.main', language),
+        sub: t('greeting.morning.sub', language)
       }
     } else if (hour >= 12 && hour < 18) {
       return {
-        main: `こんにちは、${userName}！`,
-        sub: "お疲れさまです。植物たちとの時間で心をリフレッシュしませんか？ 🌿"
+        main: t('greeting.afternoon.main', language),
+        sub: t('greeting.afternoon.sub', language)
       }
     } else if (hour >= 18 && hour < 22) {
       return {
-        main: `お疲れさまでした、${userName}`,
-        sub: "一日の終わりに、植物たちと穏やかな時間を過ごしましょう 🌅"
+        main: t('greeting.evening.main', language),
+        sub: t('greeting.evening.sub', language)
       }
     } else {
       return {
-        main: `こんばんは、${userName}`,
-        sub: "静かな夜に、植物たちの成長を見守る特別な時間です 🌙"
+        main: t('greeting.night.main', language),
+        sub: t('greeting.night.sub', language)
       }
     }
   }
@@ -439,12 +439,12 @@ const BentoGarden: React.FC = () => {
               </motion.div>
 
               <h3 className="text-3xl font-bold text-white mb-6">
-                あなたの庭は空っぽです
+                {language === 'ja' ? 'あなたの庭は空っぽです' : 'Your garden is empty'}
               </h3>
               
               <p className="text-xl text-white opacity-90 mb-8 leading-relaxed">
-                最初の植物を迎えて、<br />
-                特別な成長の物語を始めませんか？
+                {t('description', language)}<br />
+                {language === 'ja' ? '特別な成長の物語を始めませんか？' : 'Ready to start growing?'}
               </p>
 
               <motion.button
@@ -460,7 +460,7 @@ const BentoGarden: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                🌟 最初の植物を迎える
+                🌟 {t('start.button', language)}
               </motion.button>
             </motion.div>
           </motion.div>
@@ -518,7 +518,7 @@ const BentoGarden: React.FC = () => {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                ✨ 新しい仲間を迎える
+                ✨ {t('add.plant', language)}
               </motion.button>
             </motion.div>
 

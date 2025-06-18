@@ -3,18 +3,18 @@ import { motion } from 'framer-motion'
 import { Settings, Bell, Palette, Download, Globe, Volume2, X } from 'lucide-react'
 import { usePlantStore } from '../../stores/plantStore'
 import { useSoundEffects } from '../../hooks/useSoundEffects'
+import { t } from '../../utils/i18n'
 
 interface SettingsPanelProps {
   onClose: () => void
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const { plants } = usePlantStore()
+  const { plants, language, setLanguage } = usePlantStore()
   const { volume, setMasterVolume, playUISound } = useSoundEffects()
   
   const [notifications, setNotifications] = useState(true)
   const [theme, setTheme] = useState<'auto' | 'light' | 'dark'>('auto')
-  const [language, setLanguage] = useState<'ja' | 'en'>('ja')
 
   const handleNotificationToggle = () => {
     setNotifications(!notifications)
@@ -60,8 +60,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     playUISound('success')
   }
 
-  const getText = (ja: string, en: string) => language === 'ja' ? ja : en
-
   return (
     <motion.div
       className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
@@ -82,7 +80,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
           <div className="flex items-center space-x-3">
             <Settings className="w-8 h-8 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-800">
-              {getText('設定', 'Settings')}
+              {t('settings', language)}
             </h2>
           </div>
           <motion.button
@@ -101,12 +99,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Bell className="w-6 h-6 text-yellow-600" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText('通知設定', 'Notifications')}
+                {t('settings.notifications', language)}
               </h3>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gray-700">
-                {getText('植物のケア時間をお知らせ', 'Plant care reminders')}
+                {t('notification.care_reminders', language)}
               </span>
               <motion.button
                 onClick={handleNotificationToggle}
@@ -129,14 +127,14 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Palette className="w-6 h-6 text-purple-600" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText('テーマ設定', 'Theme')}
+                {t('settings.theme', language)}
               </h3>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[
-                { value: 'auto', label: getText('自動', 'Auto'), icon: '🌅' },
-                { value: 'light', label: getText('ライト', 'Light'), icon: '☀️' },
-                { value: 'dark', label: getText('ダーク', 'Dark'), icon: '🌙' }
+                { value: 'auto', label: t('theme.auto', language), icon: '🌅' },
+                { value: 'light', label: t('theme.light', language), icon: '☀️' },
+                { value: 'dark', label: t('theme.dark', language), icon: '🌙' }
               ].map((option) => (
                 <motion.button
                   key={option.value}
@@ -163,7 +161,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Globe className="w-6 h-6 text-green-600" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText('言語設定', 'Language')}
+                {t('settings.language', language)}
               </h3>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -196,7 +194,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Volume2 className="w-6 h-6 text-blue-600" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText('音量設定', 'Volume')}
+                {t('settings.volume', language)}
               </h3>
             </div>
             <div className="flex items-center space-x-4">
@@ -229,14 +227,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Download className="w-6 h-6 text-orange-600" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText('データエクスポート', 'Data Export')}
+                {t('settings.data_export', language)}
               </h3>
             </div>
             <p className="text-gray-600 mb-4">
-              {getText(
-                '植物のデータと設定をバックアップファイルとしてダウンロードできます',
-                'Download your plant data and settings as a backup file'
-              )}
+              {t('export.description', language)}
             </p>
             <motion.button
               onClick={handleExportData}
@@ -244,7 +239,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
               whileHover={{ scale: 1.02, backgroundColor: '#f97316' }}
               whileTap={{ scale: 0.98 }}
             >
-              {getText('データをエクスポート', 'Export Data')} ({plants.length} {getText('匹の植物', 'plants')})
+              {t('export.button', language)} ({plants.length} {t('export.plants_count', language)})
             </motion.button>
           </div>
 
@@ -255,10 +250,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
               Liquid Garden
             </h3>
             <p className="text-sm text-gray-600">
-              {getText(
-                'Version 1.0.0 - 植物との特別な時間をお楽しみください',
-                'Version 1.0.0 - Enjoy your special time with plants'
-              )}
+              {t('app.version', language)}
             </p>
           </div>
         </div>
