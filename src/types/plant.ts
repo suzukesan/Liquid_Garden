@@ -17,7 +17,11 @@ export const PlantType = {
   SANSEVIERIA: 'sansevieria', 
   RUBBER_TREE: 'rubber_tree',
   KENTIA_PALM: 'kentia_palm',
-  MONSTERA: 'monstera'
+  MONSTERA: 'monstera',
+  SPRING_SAKURA: 'spring_sakura',
+  SUMMER_SUNFLOWER: 'summer_sunflower',
+  AUTUMN_MAPLE: 'autumn_maple',
+  WINTER_POINSETTIA: 'winter_poinsettia'
 } as const
 
 export type PlantType = typeof PlantType[keyof typeof PlantType]
@@ -63,4 +67,5 @@ export interface PlantConfig {
     sunRequirement: number // hours per day
     talkBonus: boolean
   }
+  availableSeason?: import('@/utils/season').Season // 季節限定の場合のみ
 }

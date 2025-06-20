@@ -80,5 +80,73 @@ export const PLANT_CONFIGS: Record<PlantType, PlantConfig> = {
       sunRequirement: 4, // 1日4時間
       talkBonus: true
     }
+  },
+  [PlantType.WINTER_POINSETTIA]: {
+    name: 'ポインセチア (冬限定)',
+    type: PlantType.WINTER_POINSETTIA,
+    growthSpeed: 'slow',
+    characteristics: ['冬のシンボル', '鮮やかな赤', '華やか'],
+    liquidGlassEffect: {
+      color: 'rgba(220, 38, 38, 0.35)',
+      effect: 'snow',
+      pattern: 'flake'
+    },
+    careRequirements: {
+      waterFrequency: 5,
+      sunRequirement: 4,
+      talkBonus: true
+    },
+    availableSeason: 'winter'
+  },
+  [PlantType.SPRING_SAKURA]: {
+    name: '桜 (春限定)',
+    type: PlantType.SPRING_SAKURA,
+    growthSpeed: 'fast',
+    characteristics: ['春の象徴', '花見', '儚さ'],
+    liquidGlassEffect: {
+      color: 'rgba(236, 72, 153, 0.35)',
+      effect: 'petal',
+      pattern: 'sakura'
+    },
+    careRequirements: {
+      waterFrequency: 3,
+      sunRequirement: 6,
+      talkBonus: false
+    },
+    availableSeason: 'spring'
+  },
+  [PlantType.SUMMER_SUNFLOWER]: {
+    name: 'ひまわり (夏限定)',
+    type: PlantType.SUMMER_SUNFLOWER,
+    growthSpeed: 'fast',
+    characteristics: ['太陽を追う', '元気', '背高い'],
+    liquidGlassEffect: {
+      color: 'rgba(250, 204, 21, 0.35)',
+      effect: 'sun',
+      pattern: 'ripple'
+    },
+    careRequirements: {
+      waterFrequency: 2,
+      sunRequirement: 8,
+      talkBonus: false
+    },
+    availableSeason: 'summer'
+  },
+  [PlantType.AUTUMN_MAPLE]: {
+    name: '紅葉カエデ (秋限定)',
+    type: PlantType.AUTUMN_MAPLE,
+    growthSpeed: 'medium',
+    characteristics: ['紅葉', '深紅', '日本的'],
+    liquidGlassEffect: {
+      color: 'rgba(190, 24, 24, 0.35)',
+      effect: 'leaf',
+      pattern: 'fall'
+    },
+    careRequirements: {
+      waterFrequency: 6,
+      sunRequirement: 5,
+      talkBonus: true
+    },
+    availableSeason: 'autumn'
   }
 }

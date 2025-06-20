@@ -464,6 +464,7 @@ const BentoGarden: React.FC = () => {
               </p>
 
               <motion.button
+                data-testid="add-plant-button"
                 onClick={handleAddPlant}
                 className="px-12 py-4 bg-white text-gray-800 rounded-full text-xl font-semibold"
                 style={{
@@ -518,6 +519,7 @@ const BentoGarden: React.FC = () => {
               transition={{ delay: plants.length * 0.1 + 0.5 }}
             >
               <motion.button
+                data-testid="add-plant-button"
                 onClick={handleAddPlant}
                 className="px-8 py-4 rounded-full text-lg font-semibold"
                 style={{

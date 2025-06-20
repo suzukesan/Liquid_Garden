@@ -4,6 +4,7 @@ import { PlantType } from '../../types/plant'
 import { PLANT_CONFIGS } from '../../data/plantConfigs'
 import { usePlantStore } from '../../stores/plantStore'
 import { t, tp } from '../../utils/i18n'
+import { getCurrentSeason } from '@/utils/season'
 
 interface PlantTypeSelectorProps {
   onSelect: (type: PlantType) => void
@@ -62,7 +63,12 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
       case PlantType.RUBBER_TREE: return t('plant.rubber_tree', language)
       case PlantType.KENTIA_PALM: return t('plant.kentia_palm', language)
       case PlantType.MONSTERA: return t('plant.monstera', language)
-      default: return type
+      case PlantType.SPRING_SAKURA: return t('plant.spring_sakura', language)
+      case PlantType.SUMMER_SUNFLOWER: return t('plant.summer_sunflower', language)
+      case PlantType.AUTUMN_MAPLE: return t('plant.autumn_maple', language)
+      case PlantType.WINTER_POINSETTIA: return t('plant.winter_poinsettia', language)
+      default:
+        return PLANT_CONFIGS[type as PlantType]?.name ?? type
     }
   }
 
@@ -71,7 +77,27 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
     [PlantType.SANSEVIERIA]: '🪴',
     [PlantType.RUBBER_TREE]: '🌳',
     [PlantType.KENTIA_PALM]: '🌴',
-    [PlantType.MONSTERA]: '🍃'
+    [PlantType.MONSTERA]: '🍃',
+    [PlantType.SPRING_SAKURA]: '🌸',
+    [PlantType.SUMMER_SUNFLOWER]: '🌻',
+    [PlantType.AUTUMN_MAPLE]: '🍁',
+    [PlantType.WINTER_POINSETTIA]: '❄️'
+  }
+
+  const currentSeason = getCurrentSeason()
+
+  // 現在季節のラベルマップ
+  const seasonLabelJa: Record<import('@/utils/season').Season, string> = {
+    spring: '春',
+    summer: '夏',
+    autumn: '秋',
+    winter: '冬'
+  }
+  const seasonLabelEn: Record<import('@/utils/season').Season, string> = {
+    spring: 'Spring',
+    summer: 'Summer',
+    autumn: 'Autumn',
+    winter: 'Winter'
   }
 
   return (
@@ -99,18 +125,31 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {Object.entries(PLANT_CONFIGS).map(([type, config]) => (
+          {Object.entries(PLANT_CONFIGS)
+            .filter(([_, cfg]) => !cfg.availableSeason || cfg.availableSeason === currentSeason)
+            .map(([type, config]) => (
             <motion.div
               key={type}
-              className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+              className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${
                 selectedType === type
                   ? 'border-green-500 bg-green-50/80 dark:bg-green-900/40'
                   : 'border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/20 hover:bg-white/20 dark:hover:bg-black/30'
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              data-testid="plant-type-item"
               onClick={() => setSelectedType(type as PlantType)}
             >
+              {/* 季節限定バッジ */}
+              {config.availableSeason && (
+                <span
+                  className="absolute top-2 right-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-400/90 text-gray-800 shadow"
+                >
+                  {language === 'ja'
+                    ? `${seasonLabelJa[config.availableSeason]}限定`
+                    : `${seasonLabelEn[config.availableSeason]} Only`}
+                </span>
+              )}
               <div className="text-center">
                 <div 
                   className="text-5xl mb-4"
@@ -119,7 +158,7 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
                   {iconMap[type as PlantType] ?? '🌱'}
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">
-                  {translatePlantName(type as PlantType)}
+                  {translatePlantName(type as PlantType) ?? config.name}
                 </h3>
                 
                 {/* 特徴 */}
@@ -198,6 +237,7 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
             }`}
             whileHover={selectedType ? { scale: 1.05 } : {}}
             whileTap={selectedType ? { scale: 0.95 } : {}}
+            data-testid="confirm-plant-button"
             onClick={handleConfirm}
             disabled={!selectedType}
           >

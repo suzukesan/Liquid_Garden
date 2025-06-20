@@ -138,6 +138,10 @@ export const translations: TranslationDict = {
   'plant.rubber_tree': { ja: 'ゴムの木', en: 'Rubber Tree' },
   'plant.kentia_palm': { ja: 'ケンチャヤシ', en: 'Kentia Palm' },
   'plant.monstera': { ja: 'モンステラ', en: 'Monstera' },
+  'plant.spring_sakura': { ja: '桜', en: 'Sakura' },
+  'plant.summer_sunflower': { ja: 'ひまわり', en: 'Sunflower' },
+  'plant.autumn_maple': { ja: '紅葉カエデ', en: 'Maple' },
+  'plant.winter_poinsettia': { ja: 'ポインセチア', en: 'Poinsettia' },
   
   // 削除確認
   'delete.title': { ja: 'とのお別れ', en: 'Farewell' },

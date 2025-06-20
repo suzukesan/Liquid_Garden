@@ -56,9 +56,13 @@ const createNewPlant = (type: PlantType): Plant => {
       [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
       [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
       [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
-      [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート']
+      [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート'],
+      [PlantType.SPRING_SAKURA]: ['さくら', '花子', '桜子', 'チェリー'],
+      [PlantType.SUMMER_SUNFLOWER]: ['ひまわり', 'サニー', '陽子', 'ハナコ'],
+      [PlantType.AUTUMN_MAPLE]: ['もみじ', 'カエデ', '紅ちゃん', 'レッド'],
+      [PlantType.WINTER_POINSETTIA]: ['ポイン', 'レッドスター', 'ホーリー', 'ノエル']
     }
-    const typeNames = names[plantType] || ['みどりちゃん']
+    const typeNames = names[plantType] || ['みどりちゃん', 'グリーン', 'スプラウト']
     return typeNames[Math.floor(Math.random() * typeNames.length)]
   }
 
