@@ -1,23 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Settings, Bell, Palette, Download, Globe, Volume2, X } from 'lucide-react'
+import { Settings, Bell, Palette, Download, Globe, Volume2, X, Award } from 'lucide-react'
 import { usePlantStore } from '../../stores/plantStore'
 import { useSoundEffects } from '../../hooks/useSoundEffects'
 import { t } from '../../utils/i18n'
+import { useNotifications } from '@/hooks/useNotifications'
+import AchievementBadge from '@/components/ui/AchievementBadge'
 
 interface SettingsPanelProps {
   onClose: () => void
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
-  const { plants, language, setLanguage, theme, setTheme } = usePlantStore()
+  const { plants, language, setLanguage, theme, setTheme, achievements, addPlant } = usePlantStore()
   const { volume, setMasterVolume, playUISound } = useSoundEffects()
+  const { settings: notifSettings, toggleNotifications, updateSettings } = useNotifications()
   
-  const [notifications, setNotifications] = useState(true)
-
-  const handleNotificationToggle = () => {
-    setNotifications(!notifications)
+  const handleNotificationToggle = async () => {
+    await toggleNotifications(!notifSettings.enabled)
     playUISound('click')
+  }
+
+  const handleIntervalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10)
+    updateSettings({ reminderInterval: value })
   }
 
   const handleThemeChange = (newTheme: 'auto' | 'light' | 'dark') => {
@@ -38,7 +44,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     const data = {
       plants: plants,
       settings: {
-        notifications,
+        notifications: notifSettings.enabled,
         theme,
         language,
         volume
@@ -59,16 +65,43 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
     playUISound('success')
   }
 
+  // インポート
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const text = ev.target?.result as string
+        const data = JSON.parse(text)
+        if (Array.isArray(data.plants)) {
+          data.plants.forEach((p: any) => addPlant(p.type as any))
+        }
+        playUISound('success')
+      } catch (err) {
+        console.error(err)
+        playUISound('hover')
+      }
+    }
+    reader.readAsText(file)
+  }
+
   return (
     <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 transform-gpu"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <motion.div
-        className="bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-3xl p-8 max-w-2xl w-full border border-white/30 dark:border-white/10 max-h-[90vh] overflow-y-auto"
+        className="bg-white/20 dark:bg-black/30 backdrop-blur-xl rounded-3xl p-8 max-w-2xl w-full border border-white/30 dark:border-white/10 max-h-[90vh] overflow-y-auto transform-gpu"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
@@ -108,17 +141,34 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
               <motion.button
                 onClick={handleNotificationToggle}
                 className={`w-14 h-8 rounded-full p-1 ${
-                  notifications ? 'bg-green-500' : 'bg-gray-300'
+                  notifSettings.enabled ? 'bg-green-500' : 'bg-gray-300'
                 }`}
                 whileTap={{ scale: 0.95 }}
               >
                 <motion.div
                   className="w-6 h-6 bg-white rounded-full"
-                  animate={{ x: notifications ? 24 : 0 }}
+                  animate={{ x: notifSettings.enabled ? 24 : 0 }}
                   transition={{ duration: 0.2 }}
                 />
               </motion.button>
             </div>
+            {/* リマインダー間隔スライダー */}
+            {notifSettings.enabled && (
+              <div className="mt-4">
+                <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
+                  {language === 'ja' ? 'リマインダー間隔（分）' : 'Reminder Interval (min)'}: {notifSettings.reminderInterval}
+                </label>
+                <input
+                  type="range"
+                  min="30"
+                  max="240"
+                  step="30"
+                  value={notifSettings.reminderInterval}
+                  onChange={handleIntervalChange}
+                  className="w-full"
+                />
+              </div>
+            )}
           </div>
 
           {/* テーマ設定 */}
@@ -232,14 +282,33 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               {t('export.description', language)}
             </p>
-            <motion.button
-              onClick={handleExportData}
-              className="w-full px-6 py-3 bg-orange-500 hover:bg-orange-600 dark:hover:bg-orange-600 text-white rounded-xl font-medium"
-              whileHover={{ scale: 1.02, backgroundColor: '#f97316' }}
-              whileTap={{ scale: 0.98 }}
-            >
-              {t('export.button', language)} ({plants.length} {t('export.plants_count', language)})
-            </motion.button>
+            <div className="flex space-x-3">
+              <motion.button
+                onClick={handleExportData}
+                className="flex-1 p-3 rounded-xl border-2 border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/10"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Download className="inline-block mr-2" />
+                {language === 'ja' ? 'エクスポート' : 'Export'}
+              </motion.button>
+              <motion.button
+                onClick={handleImportClick}
+                className="flex-1 p-3 rounded-xl border-2 border-white/30 dark:border-white/20 bg-white/10 dark:bg-black/10"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Download className="inline-block mr-2 rotate-180" />
+                {language === 'ja' ? 'インポート' : 'Import'}
+              </motion.button>
+              <input
+                type="file"
+                accept="application/json"
+                ref={fileInputRef}
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
           </div>
 
           {/* アプリ情報 */}
@@ -251,6 +320,26 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {t('app.version', language)}
             </p>
+          </div>
+
+          {/* 実績・バッジ */}
+          <div className="p-6 rounded-2xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+            <div className="flex items-center space-x-3 mb-4">
+              <Award className="w-6 h-6 text-yellow-500" />
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                {language === 'ja' ? '実績一覧' : 'Achievements'}
+              </h3>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {achievements.map((ach) => (
+                <div key={ach.id} className="flex flex-col items-center space-y-2">
+                  <AchievementBadge achievement={ach} size={80} />
+                  <span className="text-sm text-center text-gray-700 dark:text-gray-200">
+                    {ach.name}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>

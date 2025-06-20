@@ -216,7 +216,7 @@ const BentoGarden: React.FC = () => {
         <AnimatePresence>
           {isTransitioning && (
             <motion.div
-              className="fixed inset-0 z-50 pointer-events-none"
+              className="fixed inset-0 z-50 pointer-events-none transform-gpu"
               style={{
                 background: `radial-gradient(circle, 
                   rgba(255, 255, 255, 0.8) 0%, 
@@ -307,7 +307,7 @@ const BentoGarden: React.FC = () => {
         {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white rounded-full opacity-30"
+            className="absolute w-2 h-2 bg-white rounded-full opacity-30 transform-gpu"
             animate={{
               x: [0, window.innerWidth || 1200],
               y: [
@@ -328,7 +328,7 @@ const BentoGarden: React.FC = () => {
 
         {/* 大きな装飾円 */}
         <motion.div
-          className="absolute -top-20 -right-20 w-40 h-40 rounded-full"
+          className="absolute -top-20 -right-20 w-40 h-40 rounded-full transform-gpu"
           style={{
             background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
           }}
@@ -344,7 +344,7 @@ const BentoGarden: React.FC = () => {
         />
         
         <motion.div
-          className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full"
+          className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full transform-gpu"
           style={{
             background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
           }}
@@ -363,7 +363,7 @@ const BentoGarden: React.FC = () => {
       <div className="relative z-10 container mx-auto px-6 py-12">
         {/* 強化されたヘッダー - 明確な階層 */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-16 transform-gpu"
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}

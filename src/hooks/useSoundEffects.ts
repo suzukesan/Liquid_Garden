@@ -8,6 +8,8 @@ class LiquidSoundEngine {
   private effectGain: GainNode | null = null
   private isInitialized = false
   private ambientSources: AudioBufferSourceNode[] = []
+  private activeNodes: Set<AudioNode> = new Set()
+  private bufferCache: Map<string, AudioBuffer> = new Map()
 
   async initialize() {
     if (this.isInitialized) return
@@ -36,9 +38,53 @@ class LiquidSoundEngine {
     }
   }
 
-  // 水の音を生成（プロシージャル生成）
+  // コンテキストのクリーンアップ
+  async cleanup() {
+    // すべてのアクティブなノードを停止
+    this.activeNodes.forEach(node => {
+      if ('stop' in node && typeof (node as any).stop === 'function') {
+        try {
+          (node as any).stop()
+        } catch (e) {
+          // 既に停止している場合のエラーを無視
+        }
+      }
+      if ('disconnect' in node) {
+        try {
+          node.disconnect()
+        } catch (e) {
+          // 既に切断されている場合のエラーを無視
+        }
+      }
+    })
+    this.activeNodes.clear()
+
+    // 環境音を停止
+    this.stopAmbientSound()
+
+    // バッファキャッシュをクリア
+    this.bufferCache.clear()
+
+    // オーディオコンテキストをクローズ
+    if (this.audioContext && this.audioContext.state !== 'closed') {
+      await this.audioContext.close()
+    }
+
+    this.audioContext = null
+    this.masterGain = null
+    this.ambientGain = null
+    this.effectGain = null
+    this.isInitialized = false
+  }
+
+  // 水の音を生成（プロシージャル生成）- キャッシュ機能付き
   private generateWaterSound(duration: number = 0.8): AudioBuffer | null {
     if (!this.audioContext) return null
+
+    const cacheKey = `water_${duration}`
+    if (this.bufferCache.has(cacheKey)) {
+      return this.bufferCache.get(cacheKey)!
+    }
 
     const sampleRate = this.audioContext.sampleRate
     const length = sampleRate * duration
@@ -63,12 +109,18 @@ class LiquidSoundEngine {
       }
     }
 
+    this.bufferCache.set(cacheKey, buffer)
     return buffer
   }
 
-  // キラキラ音を生成
+  // キラキラ音を生成 - キャッシュ機能付き
   private generateSparkleSound(duration: number = 1.2): AudioBuffer | null {
     if (!this.audioContext) return null
+
+    const cacheKey = `sparkle_${duration}`
+    if (this.bufferCache.has(cacheKey)) {
+      return this.bufferCache.get(cacheKey)!
+    }
 
     const sampleRate = this.audioContext.sampleRate
     const length = sampleRate * duration
@@ -94,12 +146,18 @@ class LiquidSoundEngine {
       }
     }
 
+    this.bufferCache.set(cacheKey, buffer)
     return buffer
   }
 
-  // 心地よいチャイム音を生成
+  // 心地よいチャイム音を生成 - キャッシュ機能付き
   private generateChimeSound(duration: number = 1.5): AudioBuffer | null {
     if (!this.audioContext) return null
+
+    const cacheKey = `chime_${duration}`
+    if (this.bufferCache.has(cacheKey)) {
+      return this.bufferCache.get(cacheKey)!
+    }
 
     const sampleRate = this.audioContext.sampleRate
     const length = sampleRate * duration
@@ -125,12 +183,18 @@ class LiquidSoundEngine {
       }
     }
 
+    this.bufferCache.set(cacheKey, buffer)
     return buffer
   }
 
-  // 環境音（水のせせらぎ）を生成
+  // 環境音（水のせせらぎ）を生成 - キャッシュ機能付き
   private generateAmbientStream(): AudioBuffer | null {
     if (!this.audioContext) return null
+
+    const cacheKey = 'ambient_stream'
+    if (this.bufferCache.has(cacheKey)) {
+      return this.bufferCache.get(cacheKey)!
+    }
 
     const duration = 10 // 10秒のループ
     const sampleRate = this.audioContext.sampleRate
@@ -170,10 +234,11 @@ class LiquidSoundEngine {
       }
     }
 
+    this.bufferCache.set(cacheKey, buffer)
     return buffer
   }
 
-  // 音を再生
+  // 音を再生 - リソース管理改善
   async playSound(type: 'water' | 'sparkle' | 'chime', volume: number = 1) {
     if (!this.audioContext || !this.effectGain) return
 
@@ -204,10 +269,22 @@ class LiquidSoundEngine {
     source.connect(gainNode)
     gainNode.connect(this.effectGain)
     
+    // ノードをトラッキング
+    this.activeNodes.add(source)
+    this.activeNodes.add(gainNode)
+    
+    // 再生終了時にノードをクリーンアップ
+    source.onended = () => {
+      source.disconnect()
+      gainNode.disconnect()
+      this.activeNodes.delete(source)
+      this.activeNodes.delete(gainNode)
+    }
+    
     source.start()
   }
 
-  // 環境音を開始
+  // 環境音を開始 - リソース管理改善
   async startAmbientSound() {
     if (!this.audioContext || !this.ambientGain) return
 
@@ -221,6 +298,10 @@ class LiquidSoundEngine {
       source.buffer = buffer
       source.loop = true
       source.connect(this.ambientGain!)
+      
+      // ノードをトラッキング
+      this.activeNodes.add(source)
+      
       source.start()
       
       this.ambientSources.push(source)
@@ -230,11 +311,13 @@ class LiquidSoundEngine {
     playAmbient()
   }
 
-  // 環境音を停止
+  // 環境音を停止 - リソース管理改善
   stopAmbientSound() {
     this.ambientSources.forEach(source => {
       try {
         source.stop()
+        source.disconnect()
+        this.activeNodes.delete(source)
       } catch (e) {
         // 既に停止している場合のエラーを無視
       }
@@ -242,7 +325,7 @@ class LiquidSoundEngine {
     this.ambientSources = []
   }
 
-  // 植物の鼓動音を生成・再生
+  // 植物の鼓動音を生成・再生 - リソース管理改善
   async playHeartbeat(bpm: number = 60, duration: number = 2) {
     if (!this.audioContext || !this.effectGain) return
 
@@ -253,28 +336,42 @@ class LiquidSoundEngine {
 
     for (let i = 0; i < beats; i++) {
       setTimeout(() => {
+        if (!this.audioContext || !this.effectGain) return
+
         // 低周波の鼓動音
-        const buffer = this.audioContext!.createBuffer(2, this.audioContext!.sampleRate * 0.1, this.audioContext!.sampleRate)
+        const buffer = this.audioContext.createBuffer(2, this.audioContext.sampleRate * 0.1, this.audioContext.sampleRate)
         
         for (let channel = 0; channel < 2; channel++) {
           const channelData = buffer.getChannelData(channel)
           
           for (let j = 0; j < channelData.length; j++) {
-            const t = j / this.audioContext!.sampleRate
+            const t = j / this.audioContext.sampleRate
             let sample = Math.sin(2 * Math.PI * 60 * t) * Math.exp(-t * 20) * 0.5
             sample += Math.sin(2 * Math.PI * 120 * t) * Math.exp(-t * 25) * 0.3
             channelData[j] = sample
           }
         }
 
-        const source = this.audioContext!.createBufferSource()
-        const gainNode = this.audioContext!.createGain()
+        const source = this.audioContext.createBufferSource()
+        const gainNode = this.audioContext.createGain()
         
         source.buffer = buffer
-        gainNode.gain.setValueAtTime(0.3, this.audioContext!.currentTime)
+        gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime)
         
         source.connect(gainNode)
-        gainNode.connect(this.effectGain!)
+        gainNode.connect(this.effectGain)
+        
+        // ノードをトラッキング
+        this.activeNodes.add(source)
+        this.activeNodes.add(gainNode)
+        
+        // 再生終了時にノードをクリーンアップ
+        source.onended = () => {
+          source.disconnect()
+          gainNode.disconnect()
+          this.activeNodes.delete(source)
+          this.activeNodes.delete(gainNode)
+        }
         
         source.start()
       }, i * beatInterval * 1000)
@@ -328,6 +425,13 @@ export const useSoundEffects = () => {
     }
   }, [])
 
+  // クリーンアップ
+  useEffect(() => {
+    return () => {
+      soundEngine.cleanup()
+    }
+  }, [])
+
   // 水やりの音
   const playWaterSound = useCallback(async () => {
     await soundEngine.playSound('water', 0.8)
@@ -348,7 +452,7 @@ export const useSoundEffects = () => {
     // 健康度と愛情レベルで鼓動の速さを調整
     const baseBpm = 60
     const healthModifier = (health / 100) * 20 // 0-20 BPM
-    const loveModifier = loveLevel * 5 // 0-25 BPM
+    const loveModifier = (loveLevel / 100) * 20 // 0-20 BPM
     const bpm = baseBpm + healthModifier + loveModifier
     
     await soundEngine.playHeartbeat(bpm, 3)

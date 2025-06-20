@@ -43,8 +43,9 @@ const LiquidDroplet: React.FC<LiquidDropletProps> = ({
   return (
     <motion.div
       ref={dropletRef}
-      className={`relative overflow-hidden cursor-pointer ${className}`}
+      className={`relative overflow-hidden cursor-pointer transform-gpu ${className}`}
       style={{
+        willChange: 'transform, opacity',
         width: size,
         height: size,
         borderRadius: '50% 40% 50% 40%',

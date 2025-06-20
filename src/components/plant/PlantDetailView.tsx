@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useAnimation } from 'framer-motion'
 import { ArrowLeft, Droplets, Sun, Heart, Calendar } from 'lucide-react'
 import { usePlantStore } from '@/stores/plantStore'
@@ -9,6 +9,9 @@ import { t } from '@/utils/i18n'
 import PlantArtDisplay from './PlantArtDisplay'
 import PlantActions from './PlantActions'
 import ConfirmModal from '../ui/ConfirmModal'
+import PlantProgressChart from './PlantProgressChart'
+import { Progress } from '@/components/ui/progress'
+import { useConfetti } from '@/hooks/useConfetti'
 
 interface PlantDetailViewProps {
   plant: Plant
@@ -39,6 +42,9 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
   const waterDropControls = useAnimation()
   const sunlightControls = useAnimation()
   const heartControls = useAnimation()
+
+  const { fire: fireConfetti } = useConfetti()
+  const prevStageRef = useRef(plant.growthStage)
 
   // 植物の感情的なケア状態を計算
   const getEmotionalCareState = () => {
@@ -266,6 +272,14 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     }
   }, [startAmbientSound, stopAmbientSound])
 
+  useEffect(() => {
+    if (plant.growthStage !== prevStageRef.current) {
+      // stage advanced
+      fireConfetti('🌸')
+      prevStageRef.current = plant.growthStage
+    }
+  }, [plant.growthStage, fireConfetti])
+
   return (
     <div className="min-h-screen p-6" style={{
       background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%)'
@@ -427,7 +441,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 animate={{ opacity: [0.9, 1, 0.9] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                {personality.nameVariations[0]}
+                {plant.name}
               </motion.h1>
               
               <motion.div
@@ -446,6 +460,14 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
               >
                 {growth.poetry}
               </motion.p>
+            </div>
+
+            {/* 次の成長までの進行度 */}
+            <div className="mx-auto max-w-md w-full space-y-2">
+              <p className="text-sm font-medium text-gray-600 text-center">次の成長まであと {100 - plant.growthProgress}%</p>
+              <Progress value={plant.growthProgress} className="h-3 bg-gray-300">
+                {/* indicator handled by component */}
+              </Progress>
             </div>
           </div>
 
@@ -471,6 +493,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 whileHover={emotionalCare.water.isActive ? { scale: 1.02, y: -4 } : {}}
                 whileTap={emotionalCare.water.isActive ? { scale: 0.98 } : {}}
                 onClick={emotionalCare.water.isActive ? handleWater : undefined}
+                aria-label="水やりボタン"
               >
                 <motion.div
                   className="text-4xl mb-3 inline-block"
@@ -532,6 +555,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 whileHover={emotionalCare.sun.isActive ? { scale: 1.02, y: -4 } : {}}
                 whileTap={emotionalCare.sun.isActive ? { scale: 0.98 } : {}}
                 onClick={emotionalCare.sun.isActive ? handleSunlight : undefined}
+                aria-label="日光浴ボタン"
               >
                 <motion.div
                   className="text-4xl mb-3 inline-block"
@@ -591,6 +615,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                 whileHover={emotionalCare.talk.isActive ? { scale: 1.02, y: -4 } : {}}
                 whileTap={emotionalCare.talk.isActive ? { scale: 0.98 } : {}}
                 onClick={emotionalCare.talk.isActive ? handleTalk : undefined}
+                aria-label="話しかけるボタン"
               >
                 <motion.div
                   className="text-4xl mb-3 inline-block"
@@ -637,34 +662,13 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             style={{
               background: 'rgba(255, 255, 255, 0.3)',
               backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255, 255, 255, 0.3)'
             }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
           >
-            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-              成長の軌跡
-            </h3>
-            
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-3 rounded-2xl bg-white bg-opacity-50">
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">健康状態</p>
-                <p className="text-lg font-bold text-green-600">
-                  {plant.health >= 80 ? '✨ とても元気' :
-                   plant.health >= 60 ? '😊 元気' :
-                   plant.health >= 40 ? '😐 普通' : '😰 心配'}
-                </p>
-              </div>
-              
-              <div className="p-3 rounded-2xl bg-white bg-opacity-50">
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">成長段階</p>
-                <p className="text-lg font-bold text-blue-600">
-                  {plant.growthStage === 'small_leaves' ? '若葉' :
-                   plant.growthStage === 'large_leaves' ? '成熟' : '開花'}
-                </p>
-              </div>
-            </div>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">過去7日間のケア履歴</h2>
+            <PlantProgressChart plant={plant} />
           </motion.div>
         </motion.div>
       </div>
@@ -674,11 +678,47 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onConfirm={confirmDelete}
-        title={`${personality.nameVariations[0]}とのお別れ`}
+        title={`${plant.name}とのお別れ`}
         message="本当にお別れしますか？一緒に過ごした思い出は永遠に失われてしまいます..."
         confirmText="お別れする"
         cancelText="もう少し一緒にいる"
       />
+
+      {/* モバイル固定アクションバー */}
+      <div className="md:hidden pointer-events-none">
+        {/* spacer to avoid content hidden */}
+        <div className="h-24" />
+      </div>
+
+      {/* 固定フッターバー (モバイルのみ) */}
+      <div className="md:hidden fixed bottom-0 left-0 w-full p-4 bg-white/70 backdrop-blur-md border-t border-white/30 pointer-events-auto">
+        <div className="flex justify-around gap-3">
+          <motion.button
+            className="flex-1 py-3 rounded-2xl bg-blue-100 text-blue-700 font-semibold disabled:opacity-40"
+            disabled={!emotionalCare.water.isActive}
+            whileHover={emotionalCare.water.isActive ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.water.isActive ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.water.isActive ? handleWater : undefined}
+            aria-label="水やりボタン(モバイル)"
+          >💧</motion.button>
+          <motion.button
+            className="flex-1 py-3 rounded-2xl bg-yellow-100 text-yellow-700 font-semibold disabled:opacity-40"
+            disabled={!emotionalCare.sun.isActive}
+            whileHover={emotionalCare.sun.isActive ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.sun.isActive ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.sun.isActive ? handleSunlight : undefined}
+            aria-label="日光浴ボタン(モバイル)"
+          >☀️</motion.button>
+          <motion.button
+            className="flex-1 py-3 rounded-2xl bg-pink-100 text-pink-700 font-semibold disabled:opacity-40"
+            disabled={!emotionalCare.talk.isActive}
+            whileHover={emotionalCare.talk.isActive ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.talk.isActive ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.talk.isActive ? handleTalk : undefined}
+            aria-label="話しかけるボタン(モバイル)"
+          >💕</motion.button>
+        </div>
+      </div>
     </div>
   )
 }

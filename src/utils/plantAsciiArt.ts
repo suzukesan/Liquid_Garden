@@ -174,18 +174,7 @@ const generateSansevieriaArt = (stage: GrowthStage, leaf: string, decorations: s
     
     case GrowthStage.FLOWER:
       return {
-        art: [
-          `${decorations[0] || '✨'} ${leaf} ${leaf} ${leaf} ${decorations[1] || '✨'}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` ${leaf} ${leaf} ${leaf}`,
-          ` 🌱 🌱 🌱`,
-          `${soil}${soil}${soil}${soil}${soil}${soil}${soil}`,
-          decorations.length > 2 ? ` ${decorations[2]}     ${decorations[2]}` : ''
-        ].filter(Boolean),
+        art: SANSEVIERIA_FULL,
         description: '立派なサンスベリア'
       }
   }
@@ -247,19 +236,7 @@ const generateRubberTreeArt = (stage: GrowthStage, leaf: string, decorations: st
     
     case GrowthStage.FLOWER:
       return {
-        art: [
-          `${decorations[0] || '✨'} ${leaf}${leaf}${leaf}${leaf}${leaf}${leaf} ${decorations[1] || '✨'}`,
-          `  ${leaf}${leaf}${leaf}${leaf}${leaf}${leaf}${leaf}`,
-          `   ${leaf}${leaf}${leaf}${leaf}${leaf}${leaf}`,
-          `     ${leaf}${leaf}${leaf}${leaf}`,
-          `       ${trunk}${trunk}`,
-          `       ${trunk}${trunk}`,
-          `       ${trunk}${trunk}`,
-          `       ${trunk}${trunk}`,
-          `    ${soil}${soil}${soil}${soil}${soil}${soil}${soil}`,
-          `   ${soil}${soil}${soil}${soil}${soil}${soil}${soil}${soil}`,
-          decorations.length > 2 ? `  ${decorations[2]}       ${decorations[2]}` : ''
-        ].filter(Boolean),
+        art: RUBBER_TREE_FULL,
         description: '立派なゴムの木'
       }
   }
@@ -320,20 +297,8 @@ const generateKentiaPalmArt = (stage: GrowthStage, leaf: string, decorations: st
     
     case GrowthStage.FLOWER:
       return {
-        art: [
-          `${decorations[0] || '🌺'} ${leaf}       ${leaf} ${decorations[1] || '🌺'}`,
-          `  ${leaf}     ${leaf}`,
-          `   ${leaf}   ${leaf}`,
-          `    ${leaf} ${leaf}`,
-          `     ${palm}`,
-          `     ${trunk}`,
-          `     ${trunk}`,
-          `     ${trunk}`,
-          `     ${trunk}`,
-          `  ${soil}${soil}${soil}${soil}${soil}${soil}${soil}`,
-          decorations.length > 2 ? ` ${decorations[2]}         ${decorations[2]}` : ''
-        ].filter(Boolean),
-        description: '立派なケンチャヤシ'
+        art: KENTIA_PALM_FULL,
+        description: '優雅なケンチャヤシ'
       }
   }
   
@@ -395,23 +360,64 @@ const generateMonsteraArt = (stage: GrowthStage, leaf: string, decorations: stri
     
     case GrowthStage.FLOWER:
       return {
-        art: [
-          `${decorations[0] || '✨'} ${heart}${heart}${heart}${heart}${heart} ${decorations[1] || '✨'}`,
-          `  ${heart}${heart}${heart}${heart}${heart}${heart}`,
-          `   ${heart}${heart}🕳️${heart}${heart}${heart}`,
-          `    ${heart}${heart}${heart}${heart}${heart}`,
-          `      ${heart}${heart}${heart}`,
-          `        ${trunk}`,
-          `        ${trunk}`,
-          `        ${trunk}`,
-          `        ${trunk}`,
-          `     ${soil}${soil}${soil}${soil}${soil}${soil}`,
-          `    ${soil}${soil}${soil}${soil}${soil}${soil}${soil}`,
-          decorations.length > 2 ? `   ${decorations[2]}       ${decorations[2]}` : ''
-        ].filter(Boolean),
-        description: '立派なモンステラ（穴あき葉）'
+        art: MONSTERA_FULL,
+        description: 'モンステラ'
       }
   }
   
   return { art: ['🌱'], description: '成長中' }
-} 
+}
+
+// ======================
+// Emoji templates (fully grown)
+// ======================
+
+const SANSEVIERIA_FULL = [
+  '🌿   🍃   🌿',
+  '  🌿   🌿   🍃',
+  '  🌿   🍃   🌿',
+  '  🌿   🌿   🌿',
+  '  🍃   🌿   🍃',
+  '  🌿   🌿   🌿',
+  '    🟫🟫🟫🟫🟫🟫',
+  '   🟫🟫🟫🟫🟫🟫🟫'
+]
+
+const RUBBER_TREE_FULL = [
+  '🌿��🌿🌿',
+  '   🌿🌿🌿🌿🌿',
+  '   🌿🌿🌿🌿🌿',
+  '     🌿🌿🌿🌿',
+  '         🪵🪵',
+  '         🪵🪵',
+  '         🪵🪵',
+  '         🪵🪵',
+  '   🟫🟫🟫🟫🟫🟫',
+  '  🟫🟫🟫🟫🟫🟫🟫'
+]
+
+const KENTIA_PALM_FULL = [
+  '🌿🍃      🍃🌿',
+  '  🌿🍃  🍃🌿',
+  '    🌿🍃🌿',
+  '  🍃🌿  🌿🍃',
+  '🌿🍃      🍃🌿',
+  '       🪵',
+  '     🪵',
+  '   🪵',
+  '  🟫🟫🟫🟫🟫',
+  ' 🟫🟫🟫🟫🟫🟫'
+]
+
+const MONSTERA_FULL = [
+  '🌿🌿  🌿🌿',
+  '  🌿          🌿',
+  '  🌿    🌿    🌿',
+  '    🌿      🌿',
+  '        🌿🌿',
+  '           🪵',
+  '         🪵',
+  '       🪵',
+  '  🟫🟫🟫🟫🟫🟫',
+  ' 🟫🟫🟫🟫🟫🟫🟫'
+] 
