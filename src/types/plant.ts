@@ -27,7 +27,6 @@ export const PlantType = {
 export type PlantType = typeof PlantType[keyof typeof PlantType]
 
 export const GrowthStage = {
-  SEED: 'seed',
   SPROUT: 'sprout',
   SMALL_LEAVES: 'small_leaves',
   LARGE_LEAVES: 'large_leaves',

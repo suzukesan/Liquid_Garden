@@ -581,7 +581,7 @@ const BentoGarden: React.FC = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setSelectedPlant(plant)}
                       >
-                        🚨 {plant.name}が緊急ケア待ち
+                        🚨 {plant.name}{t('urgent.care.waiting', language)}
                       </motion.button>
                     ))}
                   </div>

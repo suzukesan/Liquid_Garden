@@ -2,6 +2,8 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle } from 'lucide-react'
 import LiquidDroplet from '../liquid-glass/LiquidDroplet'
+import { usePlantStore } from '@/stores/plantStore'
+import { t } from '@/utils/i18n'
 
 interface ConfirmModalProps {
   isOpen: boolean
@@ -20,10 +22,15 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = '確認',
-  cancelText = 'キャンセル',
+  confirmText,
+  cancelText,
   type = 'danger'
 }) => {
+  const { language } = usePlantStore()
+
+  const confirmLabel = confirmText ?? t('confirm', language)
+  const cancelLabel = cancelText ?? t('cancel', language)
+
   const getTypeColor = () => {
     switch (type) {
       case 'danger':
@@ -132,7 +139,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
                   className="flex-1"
                 >
                   <span className="text-sm font-medium text-gray-700">
-                    {cancelText}
+                    {cancelLabel}
                   </span>
                 </LiquidDroplet>
 
@@ -150,7 +157,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
                       'text-blue-700'
                     }`}
                   >
-                    {confirmText}
+                    {confirmLabel}
                   </span>
                 </LiquidDroplet>
               </div>

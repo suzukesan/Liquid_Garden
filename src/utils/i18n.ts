@@ -108,6 +108,20 @@ export const translations: TranslationDict = {
   'char.lucky': { ja: '幸運の象徴', en: 'Symbol of luck' },
   'char.unique': { ja: '個性的', en: 'Unique' },
   
+  // 季節限定植物の特性
+  'char.winter_symbol': { ja: '冬のシンボル', en: 'Winter symbol' },
+  'char.bright_red': { ja: '鮮やかな赤', en: 'Bright red' },
+  'char.gorgeous': { ja: '華やか', en: 'Gorgeous' },
+  'char.spring_symbol': { ja: '春の象徴', en: 'Spring symbol' },
+  'char.cherry_blossom': { ja: '花見', en: 'Cherry blossom viewing' },
+  'char.ephemeral': { ja: '儚さ', en: 'Ephemeral beauty' },
+  'char.sun_following': { ja: '太陽を追う', en: 'Follows the sun' },
+  'char.energetic': { ja: '元気', en: 'Energetic' },
+  'char.tall': { ja: '背高い', en: 'Tall growing' },
+  'char.autumn_leaves': { ja: '紅葉', en: 'Autumn foliage' },
+  'char.deep_red': { ja: '深紅', en: 'Deep red' },
+  'char.japanese_style': { ja: '日本的', en: 'Japanese style' },
+  
   // 設定項目
   'settings.notifications': { ja: '通知設定', en: 'Notifications' },
   'settings.theme': { ja: 'テーマ設定', en: 'Theme' },
@@ -124,13 +138,23 @@ export const translations: TranslationDict = {
   'export.button': { ja: 'データをエクスポート', en: 'Export Data' },
   'export.plants_count': { ja: '匹の植物', en: 'plants' },
   
-  'app.version': { ja: 'Version 1.0.0 - 植物との特別な時間をお楽しみください', en: 'Version 1.0.0 - Enjoy your special time with plants' },
+  'app.version': { ja: 'Version 1.1.0 - 植物との特別な時間をお楽しみください', en: 'Version 1.1.0 - Enjoy your special time with plants' },
+  'version.label': { ja: 'バージョン', en: 'Version' },
+  'update.notes.title': { ja: 'アップデートノート', en: 'Update Notes' },
   
   // 追加のUI要素
   'empty.garden.title': { ja: 'あなたの庭は空っぽです', en: 'Your garden is empty' },
   'empty.garden.subtitle': { ja: '特別な成長の物語を始めませんか？', en: 'Ready to start growing?' },
   'plants.waiting': { ja: '匹の植物たちが、あなたを待っています', en: 'plants are waiting for you' },
-  'urgent.care': { ja: 'が緊急ケア待ち', en: 'needs urgent care' },
+  
+  // ---- added keys ----
+  'back.to.garden': { ja: '庭に戻る', en: 'Back to Garden' },
+  'import.button': { ja: 'データをインポート', en: 'Import Data' },
+  'achievements.title': { ja: '実績一覧', en: 'Achievements' },
+  'reminder.interval': { ja: 'リマインダー間隔（分）', en: 'Reminder Interval (min)' },
+  'lastcare.today': { ja: '今日', en: 'Today' },
+  'lastcare.days_ago': { ja: '{num}日前', en: '{num} day(s) ago' },
+  // ---------------------
   
   // 植物名
   'plant.pachira': { ja: 'パキラ', en: 'Pachira' },
@@ -168,6 +192,29 @@ export const translations: TranslationDict = {
   'art.sansevieria': { ja: 'サンスベリア', en: 'Sansevieria' },
   'art.magnificent_sansevieria': { ja: '立派なサンスベリア', en: 'Magnificent Sansevieria' },
   'art.unknown_plant': { ja: '不明な植物', en: 'Unknown plant' },
+  
+  // 達成通知メッセージ
+  'achievement.unlocked': { ja: 'を達成しました!', en: ' unlocked!' },
+  'achievement.first_plant.name': { ja: 'はじめの一歩', en: 'First Steps' },
+  'achievement.first_plant.description': { ja: '最初の植物を植えた', en: 'Planted your first plant' },
+  'achievement.water_10.name': { ja: 'ウォーターマスター', en: 'Water Master' },
+  'achievement.water_10.description': { ja: '水やり10回達成', en: 'Watered plants 10 times' },
+  'achievement.love_max.name': { ja: 'ラブフル', en: 'Full of Love' },
+  'achievement.love_max.description': { ja: '愛情度MAXの植物を育てた', en: 'Raised a plant with maximum love' },
+  'achievement.flower_bloom.name': { ja: '開花の瞬間', en: 'Moment of Bloom' },
+  'achievement.flower_bloom.description': { ja: '花を咲かせた', en: 'Bloomed a flower' },
+  
+  // 緊急ケア警告
+  'urgent.care.waiting': { ja: 'が緊急ケア待ち', en: ' needs urgent care' },
+  'watering.instruction': { ja: 'じょうろを植物の近くまで運んでください', en: 'Drag the watering can near the plant' },
+  'watering.in_progress': { ja: '水やり中...', en: 'Watering...' },
+  'plant.happy_reaction': { ja: 'が喜んでいます！', en: ' is happy!' },
+  
+  // 通知メッセージ
+  'notification.care_needed': { ja: '植物たちがケアを待っています！', en: 'Your plants need care!' },
+  'notification.care_count': { ja: '匹の植物が緊急ケアを必要としています', en: ' plants need urgent care' },
+  'notification.growth_event': { ja: 'が成長しました！', en: ' has grown!' },
+  'notification.new_stage': { ja: '新しい成長段階:', en: 'New growth stage:' },
 }
 
 // 翻訳関数

@@ -6,6 +6,7 @@ import { useSoundEffects } from '../../hooks/useSoundEffects'
 import { t } from '../../utils/i18n'
 import { useNotifications } from '@/hooks/useNotifications'
 import AchievementBadge from '@/components/ui/AchievementBadge'
+import UpdateNotes from '@/components/ui/UpdateNotes'
 
 interface SettingsPanelProps {
   onClose: () => void
@@ -156,7 +157,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             {notifSettings.enabled && (
               <div className="mt-4">
                 <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">
-                  {language === 'ja' ? 'リマインダー間隔（分）' : 'Reminder Interval (min)'}: {notifSettings.reminderInterval}
+                  {t('reminder.interval', language)}: {notifSettings.reminderInterval}
                 </label>
                 <input
                   type="range"
@@ -290,7 +291,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Download className="inline-block mr-2" />
-                {language === 'ja' ? 'エクスポート' : 'Export'}
+                {t('export.button', language)}
               </motion.button>
               <motion.button
                 onClick={handleImportClick}
@@ -299,7 +300,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                 whileTap={{ scale: 0.98 }}
               >
                 <Download className="inline-block mr-2 rotate-180" />
-                {language === 'ja' ? 'インポート' : 'Import'}
+                {t('import.button', language)}
               </motion.button>
               <input
                 type="file"
@@ -317,9 +318,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
               Liquid Garden
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               {t('app.version', language)}
             </p>
+            <UpdateNotes language={language} />
           </div>
 
           {/* 実績・バッジ */}
@@ -327,7 +329,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="flex items-center space-x-3 mb-4">
               <Award className="w-6 h-6 text-yellow-500" />
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                {language === 'ja' ? '実績一覧' : 'Achievements'}
+                {t('achievements.title', language)}
               </h3>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -335,7 +337,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                 <div key={ach.id} className="flex flex-col items-center space-y-2">
                   <AchievementBadge achievement={ach} size={80} />
                   <span className="text-sm text-center text-gray-700 dark:text-gray-200">
-                    {ach.name}
+                    {t(`achievement.${ach.id}.name`, language)}
                   </span>
                 </div>
               ))}

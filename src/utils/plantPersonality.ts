@@ -38,7 +38,70 @@ const seededRandomInt = (seed: string, min: number, max: number): number => {
 }
 
 // 植物タイプ別の名前バリエーション
-const getNameVariations = (type: PlantType): string[] => {
+const getNameVariations = (type: PlantType, language: 'ja' | 'en' = 'ja'): string[] => {
+  if (language === 'en') {
+    // 英語モード用の名前
+    switch (type) {
+      case 'pachira':
+        return [
+          'Leafy', 'Patchy', 'Greeny', 'Sprout',
+          'Pachy', 'Green Bean', 'Little Leaf', 'Buddy',
+          'Leafster', 'Pachira Jr.', 'Green Guy', 'Mr. Green'
+        ]
+      case 'sansevieria':
+        return [
+          'Sunny', 'Slim', 'Tiger', 'Sharp',
+          'Sanny', 'Sleek', 'Stripe', 'Straight',
+          'Sans', 'Smart', 'Tall Guy', 'Upright'
+        ]
+      case 'monstera':
+        return [
+          'Monster', 'Heart', 'Holey', 'Mona',
+          'MonMon', 'Hearty', 'Swiss', 'Fenestra',
+          'Heartie', 'Hole-y', 'Monty', 'Heart Buddy'
+        ]
+      case 'rubber_tree':
+        return [
+          'Rubber', 'Bouncy', 'Flex', 'Buddy',
+          'Rubby', 'Stretchy', 'Elastic', 'Gummy',
+          'Flexy', 'Bouncer', 'Rubber Duck', 'Mr. Stretch'
+        ]
+      case 'kentia_palm':
+        return [
+          'Palm', 'Tropi', 'Coco', 'Resort',
+          'Kenny', 'Tropical', 'Paradise', 'Beach',
+          'Palmy', 'Island', 'Coconut', 'Vacation'
+        ]
+      case 'spring_sakura':
+        return [
+          'Sakura', 'Cherry', 'Blossom', 'Flora',
+          'Pinky', 'Petal', 'Spring', 'Bloom',
+          'Rosy', 'Flower', 'Blossomy', 'Cherry Pie'
+        ]
+      case 'summer_sunflower':
+        return [
+          'Sunny', 'Sunshine', 'Helio', 'Bloom',
+          'Ray', 'Golden', 'Bright', 'Sunny D',
+          'Sunbeam', 'Goldie', 'Summer', 'Cheerful'
+        ]
+      case 'autumn_maple':
+        return [
+          'Maple', 'Red', 'Autumn', 'Scarlet',
+          'Crimson', 'Rusty', 'Amber', 'Fall',
+          'Ruby', 'Fire', 'Orange', 'Flame'
+        ]
+      case 'winter_poinsettia':
+        return [
+          'Poin', 'Holly', 'Noel', 'Star',
+          'Snowy', 'Winter', 'Frost', 'Sparkle',
+          'Crystal', 'Twinkle', 'Starry', 'Jolly'
+        ]
+      default:
+        return ['Greeny', 'Sprout', 'Buddy', 'Leafy']
+    }
+  }
+  
+  // 日本語モード用の名前（既存のコード）
   switch (type) {
     case 'pachira':
       return [
@@ -58,12 +121,48 @@ const getNameVariations = (type: PlantType): string[] => {
         'モンモン', 'ハートン', '穴太郎', 'モンテラ',
         'ハーティ', 'あなちゃん', 'モンスタ', 'ハート君'
       ]
+    case 'rubber_tree':
+      return [
+        'ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち',
+        'ゴムゴム', 'のびのび', 'エラスティ', 'ぐにぐに',
+        'フレキシ', 'バウンサー', 'ゴム太', 'のび助'
+      ]
+    case 'kentia_palm':
+      return [
+        'ヤシの実', 'トロピカル', 'パーム', 'リゾート',
+        'ケニー', 'ココナッツ', '南国', 'ビーチ',
+        'パルミー', 'アイランド', 'バカンス', 'パラダイス'
+      ]
+    case 'spring_sakura':
+      return [
+        'さくら', '花子', '桜子', 'チェリー',
+        'ピンキー', '花びら', '春香', 'ブルーム',
+        'ロージー', 'フラワー', '咲良', 'ブロッサム'
+      ]
+    case 'summer_sunflower':
+      return [
+        'ひまわり', 'サニー', '陽子', 'ハナコ',
+        'レイ', 'ゴールデン', '輝', 'サニーD',
+        'サンビーム', 'ゴールディ', '夏美', 'チアフル'
+      ]
+    case 'autumn_maple':
+      return [
+        'もみじ', 'カエデ', '紅ちゃん', 'レッド',
+        'クリムゾン', 'ラスティ', 'アンバー', '秋葉',
+        'ルビー', 'ファイア', 'オレンジ', 'フレイム'
+      ]
+    case 'winter_poinsettia':
+      return [
+        'ポイン', 'レッドスター', 'ホーリー', 'ノエル',
+        'スノーウィ', 'ウィンター', 'フロスト', 'スパークル',
+        'クリスタル', 'トゥインクル', 'スターリー', 'ジョリー'
+      ]
     default:
       return ['みどりちゃん', 'グリーン', 'わかば', 'リーフ']
   }
 }
 
-export const generatePlantPersonality = (plant: Plant): PlantPersonality => {
+export const generatePlantPersonality = (plant: Plant, language: 'ja' | 'en' = 'ja'): PlantPersonality => {
   const seed = plant.id
   
   return {
@@ -83,7 +182,7 @@ export const generatePlantPersonality = (plant: Plant): PlantPersonality => {
     playfulness: seededRandom(seed + 'play', 0, 1),
     sensitivity: seededRandom(seed + 'sense', 0, 1),
     
-    nameVariations: getNameVariations(plant.type)
+    nameVariations: getNameVariations(plant.type, language)
   }
 }
 

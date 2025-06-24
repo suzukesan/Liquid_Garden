@@ -13,23 +13,22 @@ export const PlantCardHeader: React.FC<PlantCardHeaderProps> = React.memo(({ pla
   
   // 植物の個性的な名前表示
   const personalizedName = React.useMemo(() => {
-    const personality = generatePlantPersonality(plant)
+    const personality = generatePlantPersonality(plant, language)
     const variations = personality.nameVariations
     const dayIndex = Math.floor(Date.now() / (24 * 60 * 60 * 1000)) % variations.length
     return variations[dayIndex]
-  }, [plant])
+  }, [plant, language])
 
   // 成長段階の詩的表現
   const growth = React.useMemo(() => {
     switch (plant.growthStage) {
-      case GrowthStage.SEED: return { emoji: '🌱', poetry: '小さな希望を宿した種' }
-      case GrowthStage.SPROUT: return { emoji: '🌿', poetry: '命あふれる新芽' }
-      case GrowthStage.SMALL_LEAVES: return { emoji: '🍃', poetry: '若葉色の歌声' }
-      case GrowthStage.LARGE_LEAVES: return { emoji: '🌳', poetry: '深緑の豊かな歌声' }
-      case GrowthStage.FLOWER: return { emoji: '🌸', poetry: '花ひらく生命の詩' }
-      default: return { emoji: '🌱', poetry: '小さな希望を宿した種' }
+      case GrowthStage.SPROUT: return { emoji: '🌿', poetry: t('poetry.sprout', language) }
+      case GrowthStage.SMALL_LEAVES: return { emoji: '🍃', poetry: t('poetry.small_leaves', language) }
+      case GrowthStage.LARGE_LEAVES: return { emoji: '🌳', poetry: t('poetry.large_leaves', language) }
+      case GrowthStage.FLOWER: return { emoji: '🌸', poetry: t('poetry.flower', language) }
+      default: return { emoji: '🌿', poetry: t('poetry.sprout', language) }
     }
-  }, [plant.growthStage])
+  }, [plant.growthStage, language])
 
   const translatedType = React.useMemo(() => {
     return t(`plant.${plant.type}`, language)

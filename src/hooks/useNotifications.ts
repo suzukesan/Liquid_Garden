@@ -153,13 +153,8 @@ export const useNotifications = () => {
     })
 
     if (plantsNeedingCare.length > 0) {
-      const title = language === 'ja' 
-        ? '🌱 植物たちがケアを待っています！'
-        : '🌱 Your plants need care!'
-      
-      const body = language === 'ja'
-        ? `${plantsNeedingCare.length}匹の植物が緊急ケアを必要としています`
-        : `${plantsNeedingCare.length} plants need urgent care`
+      const title = `🌱 ${t('notification.care_needed', language)}`
+      const body = `${plantsNeedingCare.length}${t('notification.care_count', language)}`
 
       sendNotification(title, { body })
     }
@@ -171,13 +166,8 @@ export const useNotifications = () => {
       return
     }
 
-    const title = language === 'ja'
-      ? `🌸 ${plant.name}が成長しました！`
-      : `🌸 ${plant.name} has grown!`
-    
-    const body = language === 'ja'
-      ? `新しい成長段階: ${t(`growth.${newStage}`, language)}`
-      : `New growth stage: ${t(`growth.${newStage}`, language)}`
+    const title = `🌸 ${plant.name}${t('notification.growth_event', language)}`
+    const body = `${t('notification.new_stage', language)} ${t(`growth.${newStage}`, language)}`
 
     sendNotification(title, { body })
   }, [settings, sendNotification, language])

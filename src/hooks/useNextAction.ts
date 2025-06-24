@@ -1,8 +1,10 @@
 import { useMemo } from 'react'
 import { Plant } from '@/types/plant'
+import { usePlantStore } from '@/stores/plantStore'
+import { t } from '@/utils/i18n'
 
-interface NextAction {
-  type: string
+export interface NextAction {
+  type: 'water' | 'sun' | 'talk'
   icon: string
   text: string
   urgency: 'urgent' | 'needed' | 'normal'
@@ -10,6 +12,8 @@ interface NextAction {
 }
 
 export const useNextAction = (plant: Plant): NextAction => {
+  const { language } = usePlantStore()
+  
   return useMemo(() => {
     const timeSinceWater = (Date.now() - plant.lastWatered.getTime()) / (24 * 60 * 60 * 1000)
     const timeSinceSun = (Date.now() - plant.lastSunExposure.getTime()) / (24 * 60 * 60 * 1000)
@@ -22,9 +26,9 @@ export const useNextAction = (plant: Plant): NextAction => {
       urgentActions.push({ 
         type: 'water', 
         icon: '💧', 
-        text: '水やり', 
+        text: t('care.water', language), 
         urgency: 'urgent',
-        description: 'のどがからからです'
+        description: t('water.thirsty', language)
       })
     }
     
@@ -32,9 +36,9 @@ export const useNextAction = (plant: Plant): NextAction => {
       urgentActions.push({ 
         type: 'sun', 
         icon: '☀️', 
-        text: '日光浴', 
+        text: t('care.sunlight', language), 
         urgency: 'urgent',
-        description: 'お日様が恋しそう'
+        description: t('sun.misses', language)
       })
     }
     
@@ -42,9 +46,9 @@ export const useNextAction = (plant: Plant): NextAction => {
       urgentActions.push({ 
         type: 'talk', 
         icon: '💕', 
-        text: '話しかける', 
+        text: t('care.talk', language), 
         urgency: plant.loveLevel < 20 ? 'urgent' : 'needed',
-        description: plant.loveLevel < 20 ? 'とても寂しそう' : '話を聞いて欲しそう'
+        description: plant.loveLevel < 20 ? t('talk.lonely', language) : t('talk.wants', language)
       })
     }
 
@@ -54,29 +58,36 @@ export const useNextAction = (plant: Plant): NextAction => {
         urgentActions.push({ 
           type: 'water', 
           icon: '💧', 
-          text: '水やり', 
+          text: t('care.water', language), 
           urgency: 'normal',
-          description: 'そろそろお水が欲しいかも'
+          description: t('water.wants', language)
         })
       } else if (timeSinceSun > 0.3) {
         urgentActions.push({ 
           type: 'sun', 
           icon: '☀️', 
-          text: '日光浴', 
+          text: t('care.sunlight', language), 
           urgency: 'normal',
-          description: '光を浴びたそう'
+          description: t('sun.wants', language)
         })
       } else {
         urgentActions.push({ 
           type: 'talk', 
           icon: '😊', 
-          text: 'お世話', 
+          text: t('care.talk', language), 
           urgency: 'normal',
-          description: '元気に過ごしています'
+          description: t('care.happy', language)
         })
       }
     }
 
-    return urgentActions[0] // 最も緊急なアクションを返す
-  }, [plant.lastWatered, plant.lastSunExposure, plant.loveLevel])
+    // 最も緊急なアクションを返す
+    return urgentActions[0] || { 
+      type: 'talk', 
+      icon: '😊', 
+      text: t('care.talk', language), 
+      urgency: 'normal',
+      description: t('care.happy', language)
+    }
+  }, [plant, language])
 } 

@@ -40,6 +40,19 @@ const PlantTypeSelector: React.FC<PlantTypeSelectorProps> = ({ onSelect, onCance
         case 'ハート型葉': return t('char.heart_shaped', language)
         case '幸運の象徴': return t('char.lucky', language)
         case '個性的': return t('char.unique', language)
+        // 季節限定植物の特性
+        case '冬のシンボル': return t('char.winter_symbol', language)
+        case '鮮やかな赤': return t('char.bright_red', language)
+        case '華やか': return t('char.gorgeous', language)
+        case '春の象徴': return t('char.spring_symbol', language)
+        case '花見': return t('char.cherry_blossom', language)
+        case '儚さ': return t('char.ephemeral', language)
+        case '太陽を追う': return t('char.sun_following', language)
+        case '元気': return t('char.energetic', language)
+        case '背高い': return t('char.tall', language)
+        case '紅葉': return t('char.autumn_leaves', language)
+        case '深紅': return t('char.deep_red', language)
+        case '日本的': return t('char.japanese_style', language)
         default: return char
       }
     })

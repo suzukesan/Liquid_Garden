@@ -17,7 +17,7 @@ self.addEventListener('push', (event) => {
   const data = event.data?.json() || {}
   const title = data.title || '🌿 Liquid Garden'
   const options = {
-    body: data.body || '植物のお世話の時間です',
+    body: data.body || 'Time to care for your plants',
     icon: '/icon-192x192.png',
     badge: '/icon-96x96.png',
     data: data

@@ -46,31 +46,44 @@ interface PlantStore {
   unlockAchievement: (id: string) => void
 }
 
-const createNewPlant = (type: PlantType): Plant => {
+const createNewPlant = (type: PlantType, language: Language): Plant => {
   const plantId = `plant-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
   
-  // 植物タイプ別のランダムな名前
-  const getRandomName = (plantType: PlantType): string => {
-    const names = {
-      [PlantType.PACHIRA]: ['みどりちゃん', 'パッチー', 'リーフィ', 'わかば'],
-      [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
-      [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
-      [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
-      [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート'],
-      [PlantType.SPRING_SAKURA]: ['さくら', '花子', '桜子', 'チェリー'],
-      [PlantType.SUMMER_SUNFLOWER]: ['ひまわり', 'サニー', '陽子', 'ハナコ'],
-      [PlantType.AUTUMN_MAPLE]: ['もみじ', 'カエデ', '紅ちゃん', 'レッド'],
-      [PlantType.WINTER_POINSETTIA]: ['ポイン', 'レッドスター', 'ホーリー', 'ノエル']
-    }
-    const typeNames = names[plantType] || ['みどりちゃん', 'グリーン', 'スプラウト']
-    return typeNames[Math.floor(Math.random() * typeNames.length)]
+  // 植物タイプ別のランダムな名前（日英）
+  const namesJa: Record<PlantType, string[]> = {
+    [PlantType.PACHIRA]: ['みどりちゃん', 'パッチー', 'リーフィ', 'わかば'],
+    [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
+    [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
+    [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
+    [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート'],
+    [PlantType.SPRING_SAKURA]: ['さくら', '花子', '桜子', 'チェリー'],
+    [PlantType.SUMMER_SUNFLOWER]: ['ひまわり', 'サニー', '陽子', 'ハナコ'],
+    [PlantType.AUTUMN_MAPLE]: ['もみじ', 'カエデ', '紅ちゃん', 'レッド'],
+    [PlantType.WINTER_POINSETTIA]: ['ポイン', 'レッドスター', 'ホーリー', 'ノエル']
   }
+
+  const namesEn: Record<PlantType, string[]> = {
+    [PlantType.PACHIRA]: ['Leafy', 'Patchy', 'Greeny', 'Sprout'],
+    [PlantType.SANSEVIERIA]: ['Sunny', 'Slim', 'Tiger', 'Sharp'],
+    [PlantType.MONSTERA]: ['Monster', 'Heart', 'Leafy', 'Mona'],
+    [PlantType.RUBBER_TREE]: ['Rubber', 'Bouncy', 'Flex', 'Buddy'],
+    [PlantType.KENTIA_PALM]: ['Palm', 'Tropi', 'Coco', 'Resort'],
+    [PlantType.SPRING_SAKURA]: ['Sakura', 'Cherry', 'Blossom', 'Flora'],
+    [PlantType.SUMMER_SUNFLOWER]: ['Sunny', 'Sunshine', 'Helio', 'Bloom'],
+    [PlantType.AUTUMN_MAPLE]: ['Maple', 'Red', 'Autumn', 'Scarlet'],
+    [PlantType.WINTER_POINSETTIA]: ['Poin', 'Holly', 'Noel', 'Star']
+  }
+
+  const namePool = language === 'ja' ? namesJa[type] : namesEn[type]
+  const fallbackPool = language === 'ja' ? ['みどりちゃん', 'グリーン', 'スプラウト'] : ['Greeny', 'Sprout', 'Buddy']
+  const pool = namePool ?? fallbackPool
+  const randomName = pool[Math.floor(Math.random() * pool.length)]
 
   return {
     id: plantId,
-    name: getRandomName(type),
+    name: randomName,
     type,
-    growthStage: GrowthStage.SEED,
+    growthStage: GrowthStage.SPROUT,
     health: Math.floor(Math.random() * 40) + 60, // 60-100でランダム
     growthProgress: Math.floor(Math.random() * 30), // 0-30でランダム
     loveLevel: Math.floor(Math.random() * 30) + 20, // 20-50でランダム
@@ -90,15 +103,16 @@ export const usePlantStore = create<PlantStore>()(
       language: 'ja', // デフォルトは日本語
       theme: 'auto', // テーマは自動
       achievements: [
-        { id: 'first_plant', name: 'はじめの一歩', emoji: '🌱', description: '最初の植物を植えた', unlocked: false },
-        { id: 'water_10', name: 'ウォーターマスター', emoji: '💧', description: '水やり10回達成', unlocked: false },
-        { id: 'love_max', name: 'ラブフル', emoji: '❤️', description: '愛情度MAXの植物を育てた', unlocked: false },
-        { id: 'flower_bloom', name: '開花の瞬間', emoji: '🌸', description: '花を咲かせた', unlocked: false }
+        { id: 'first_plant', name: '', emoji: '🌱', description: '', unlocked: false },
+        { id: 'water_10', name: '', emoji: '💧', description: '', unlocked: false },
+        { id: 'love_max', name: '', emoji: '❤️', description: '', unlocked: false },
+        { id: 'flower_bloom', name: '', emoji: '🌸', description: '', unlocked: false }
       ],
       stats: { waterCount: 0, sunCount: 0, talkCount: 0 },
 
       addPlant: (type: PlantType) => {
-        const newPlant = createNewPlant(type)
+        const { language } = get()
+        const newPlant = createNewPlant(type, language)
         set((state) => ({
           plants: [...state.plants, newPlant],
           selectedPlant: newPlant
@@ -210,11 +224,6 @@ export const usePlantStore = create<PlantStore>()(
             // Advance growth stage if progress is 100%
             if (plant.growthProgress >= 100) {
               switch (plant.growthStage) {
-                case GrowthStage.SEED:
-                  newGrowthStage = GrowthStage.SPROUT
-                  newGrowthProgress = 0
-                  notifyGrowthEvent?.(plant, 'sprout')
-                  break
                 case GrowthStage.SPROUT:
                   newGrowthStage = GrowthStage.SMALL_LEAVES
                   newGrowthProgress = 0
@@ -302,6 +311,8 @@ export const usePlantStore = create<PlantStore>()(
           // 文字列からDateオブジェクトに変換
           state.plants = state.plants.map(plant => ({
             ...plant,
+            // map legacy 'seed' value stored before v1.2 to 'sprout'
+            growthStage: (plant.growthStage as string) === 'seed' ? GrowthStage.SPROUT : plant.growthStage,
             lastWatered: new Date(plant.lastWatered),
             lastSunExposure: new Date(plant.lastSunExposure),
             lastTalk: new Date(plant.lastTalk),

@@ -5,13 +5,14 @@ import { usePlantStore } from '@/stores/plantStore'
 import { Plant, PlantType, GrowthStage } from '@/types/plant'
 import { generatePlantPersonality, generatePlantColors, getPlantStateModifiers } from '@/utils/plantPersonality'
 import { useSoundEffects } from '@/hooks/useSoundEffects'
-import { t } from '@/utils/i18n'
+import { t, tp } from '@/utils/i18n'
 import PlantArtDisplay from './PlantArtDisplay'
 import PlantActions from './PlantActions'
 import ConfirmModal from '../ui/ConfirmModal'
 import PlantProgressChart from './PlantProgressChart'
 import { Progress } from '@/components/ui/progress'
 import { useConfetti } from '@/hooks/useConfetti'
+import WateringModal from '@/components/ui/WateringModal'
 
 interface PlantDetailViewProps {
   plant: Plant
@@ -30,6 +31,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     isAmbientPlaying 
   } = useSoundEffects()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showWaterModal, setShowWaterModal] = useState(false)
   const [recentAction, setRecentAction] = useState<string | null>(null)
   const [isPlantReacting, setIsPlantReacting] = useState(false)
   
@@ -52,6 +54,13 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     const timeSinceSun = (Date.now() - plant.lastSunExposure.getTime()) / (24 * 60 * 60 * 1000)
     const timeSinceTalk = (Date.now() - plant.lastTalk.getTime()) / (24 * 60 * 60 * 1000)
 
+    const formatLastCare = (days: number) => {
+      if (days < 1) {
+        return t('lastcare.today', language)
+      }
+      return tp('lastcare.days_ago', language, { num: Math.floor(days) })
+    }
+
     return {
       water: {
         // アクション（常に動詞）
@@ -61,7 +70,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
                    timeSinceWater > 1 ? t('water.wants', language) : 
                    t('care.happy', language),
         // 最後のお世話からの経過時間
-        lastCareText: timeSinceWater < 1 ? '今日' : `${Math.floor(timeSinceWater)}日前`,
+        lastCareText: formatLastCare(timeSinceWater),
         // 緊急度
         urgency: timeSinceWater > 2 ? 'urgent' : timeSinceWater > 1 ? 'needed' : 'satisfied',
         // ボタンの活性状態（緊急度に基づく）
@@ -73,20 +82,20 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
         statusText: timeSinceSun > 1 ? t('sun.misses', language) : 
                    timeSinceSun > 0.5 ? t('sun.wants', language) : 
                    t('care.happy', language),
-        lastCareText: timeSinceSun < 1 ? '今日' : `${Math.floor(timeSinceSun)}日前`,
+        lastCareText: formatLastCare(timeSinceSun),
         urgency: timeSinceSun > 1 ? 'urgent' : timeSinceSun > 0.5 ? 'needed' : 'satisfied',
         isActive: timeSinceSun > 0.3, // 約8時間経過したら活性化
         emoji: timeSinceSun > 1 ? '🌙' : timeSinceSun > 0.5 ? '🌤️' : '☀️'
       },
       talk: {
         actionText: t('care.talk', language),
-        statusText: plant.loveLevel < 40 ? t('talk.lonely', language) : 
-                   plant.loveLevel < 80 ? t('talk.wants', language) : 
+        statusText: timeSinceTalk > 2 ? t('talk.lonely', language) : 
+                   timeSinceTalk > 1 ? t('talk.wants', language) : 
                    t('care.happy', language),
-        lastCareText: timeSinceTalk < 1 ? '今日' : `${Math.floor(timeSinceTalk)}日前`,
-                  urgency: plant.loveLevel < 40 ? 'urgent' : plant.loveLevel < 80 ? 'needed' : 'satisfied',
-        isActive: plant.loveLevel < 100, // 最大レベル未満なら常に活性化
-                  emoji: plant.loveLevel < 40 ? '😢' : plant.loveLevel < 80 ? '🥺' : '🥰'
+        lastCareText: formatLastCare(timeSinceTalk),
+        urgency: timeSinceTalk > 2 ? 'urgent' : timeSinceTalk > 1 ? 'needed' : 'satisfied',
+        isActive: timeSinceTalk > 0.5, // 半日以上経過したら活性化
+        emoji: timeSinceTalk > 2 ? '😢' : timeSinceTalk > 1 ? '💬' : '💖'
       }
     }
   }
@@ -145,9 +154,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     })
     
     // 心地よい水音を再生
-    await playWaterSound()
-    waterPlant(plant.id)
-    await triggerPlantReaction('water')
+    setShowWaterModal(true)
   }
 
   const handleSunlight = async () => {
@@ -193,31 +200,31 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
   const getDeepEmotionalState = () => {
     if (plant.health > 80 && plant.loveLevel >= 4) {
       return { 
-        text: 'あなたの愛に包まれて、幸せいっぱいです', 
+        text: t('emotion.very_happy', language), 
         mood: '✨',
         aura: 'radiant'
       }
     } else if (plant.health > 60 && plant.loveLevel >= 3) {
       return { 
-        text: '心地よい日々を過ごしています', 
+        text: t('emotion.happy', language), 
         mood: '🌱',
         aura: 'peaceful'
       }
     } else if (plant.health > 40) {
       return { 
-        text: 'ちょっと元気がないけれど、頑張っています', 
+        text: t('emotion.worried', language), 
         mood: '🍃',
         aura: 'gentle'
       }
     } else if (plant.health > 20) {
       return { 
-        text: 'そばにいてくれるだけで嬉しいです', 
+        text: t('emotion.calm', language), 
         mood: '😌',
         aura: 'fragile'
       }
     } else {
       return { 
-        text: '静かに回復の時を待っています', 
+        text: t('emotion.resting', language), 
         mood: '💤',
         aura: 'resting'
       }
@@ -253,12 +260,11 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
   // 成長段階の詩的表現
   const getPoeticalGrowthStage = () => {
     switch (plant.growthStage) {
-      case GrowthStage.SEED: return { emoji: '🌱', poetry: '小さな希望を宿した種' }
-      case GrowthStage.SPROUT: return { emoji: '🌿', poetry: '命あふれる新芽' }
-      case GrowthStage.SMALL_LEAVES: return { emoji: '🍃', poetry: '若葉色の歌声' }
-      case GrowthStage.LARGE_LEAVES: return { emoji: '🌳', poetry: '深緑の豊かな歌声' }
-      case GrowthStage.FLOWER: return { emoji: '🌸', poetry: '花ひらく生命の詩' }
-      default: return { emoji: '🌱', poetry: '小さな希望を宿した種' }
+      case GrowthStage.SPROUT: return { emoji: '🌿', poetry: t('poetry.sprout', language) }
+      case GrowthStage.SMALL_LEAVES: return { emoji: '🍃', poetry: t('poetry.small_leaves', language) }
+      case GrowthStage.LARGE_LEAVES: return { emoji: '🌳', poetry: t('poetry.large_leaves', language) }
+      case GrowthStage.FLOWER: return { emoji: '🌸', poetry: t('poetry.flower', language) }
+      default: return { emoji: '🌿', poetry: t('poetry.sprout', language) }
     }
   }
 
@@ -279,6 +285,8 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
       prevStageRef.current = plant.growthStage
     }
   }, [plant.growthStage, fireConfetti])
+
+  const closeWaterModal = () => setShowWaterModal(false)
 
   return (
     <div className="min-h-screen p-6" style={{
@@ -335,7 +343,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
           onHoverStart={() => playUISound('hover')}
         >
           <ArrowLeft size={20} />
-          <span>庭に戻る</span>
+          <span>{t('back.to.garden', language)}</span>
         </motion.button>
 
         {/* メイン詳細カード */}
@@ -351,6 +359,15 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             onDelete={handleDelete}
             className="absolute top-6 right-6"
           />
+
+          {/* Watering modal */}
+          {showWaterModal && (
+            <WateringModal 
+              plant={plant}
+              onClose={closeWaterModal}
+              onWaterComplete={() => triggerPlantReaction('water')}
+            />
+          )}
 
           {/* 植物の中央表示 - 生命の呼吸と反応 */}
           <div className="text-center space-y-6">

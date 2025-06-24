@@ -51,16 +51,6 @@ const generatePachiraArt = (stage: GrowthStage, leaf: string, decorations: strin
   const soil = '🟫'
   
   switch (stage) {
-    case GrowthStage.SEED:
-      return {
-        art: [
-          '   ✨',
-          ' 🌰🌱',
-          '🟫🟫🟫'
-        ],
-        description: '種の状態'
-      }
-    
     case GrowthStage.SPROUT:
       return {
         art: [
@@ -127,15 +117,6 @@ const generateSansevieriaArt = (stage: GrowthStage, leaf: string, decorations: s
   const soil = '🟫'
   
   switch (stage) {
-    case GrowthStage.SEED:
-      return {
-        art: [
-          ' 🌰',
-          '🟫🟫'
-        ],
-        description: '種の状態'
-      }
-    
     case GrowthStage.SPROUT:
       return {
         art: [
@@ -187,15 +168,6 @@ const generateRubberTreeArt = (stage: GrowthStage, leaf: string, decorations: st
   const soil = '🟫'
   
   switch (stage) {
-    case GrowthStage.SEED:
-      return {
-        art: [
-          ' 🌰✨',
-          '🟫🟫🟫'
-        ],
-        description: '種の状態'
-      }
-    
     case GrowthStage.SPROUT:
       return {
         art: [
@@ -250,15 +222,6 @@ const generateKentiaPalmArt = (stage: GrowthStage, leaf: string, decorations: st
   const soil = '🟫'
   
   switch (stage) {
-    case GrowthStage.SEED:
-      return {
-        art: [
-          ' 🥥',
-          '🟫🟫'
-        ],
-        description: '種の状態'
-      }
-    
     case GrowthStage.SPROUT:
       return {
         art: [
@@ -311,15 +274,6 @@ const generateMonsteraArt = (stage: GrowthStage, leaf: string, decorations: stri
   const soil = '🟫'
   
   switch (stage) {
-    case GrowthStage.SEED:
-      return {
-        art: [
-          ' 🌰💕',
-          '🟫🟫🟫'
-        ],
-        description: '種の状態'
-      }
-    
     case GrowthStage.SPROUT:
       return {
         art: [
@@ -384,7 +338,7 @@ const SANSEVIERIA_FULL = [
 ]
 
 const RUBBER_TREE_FULL = [
-  '🌿��🌿🌿',
+  '🌿🌿��🌿🌿',
   '   🌿🌿🌿🌿🌿',
   '   🌿🌿🌿🌿🌿',
   '     🌿🌿🌿🌿',

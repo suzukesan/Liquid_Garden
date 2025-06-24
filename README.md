@@ -1,84 +1,79 @@
-# Liquid Garden
+# 🌿 Liquid Garden
 
-## 植物育成Webアプリケーション
+A beautifully crafted, offline-friendly **digital garden simulator** built with React, Vite and Tailwind CSS.  Nurture your virtual plants, watch them grow, and relax along the way.
 
-**Liquid Glass UIを活用した癒し系植物育成アプリ**
+---
 
-### 🌱 プロジェクト概要
+## Features
 
-- **アプリ名**: Liquid Garden
-- **プラットフォーム**: Web（純粋なWebアプリケーション）
-- **コンセプト**: Liquid Glass UIを活用した癒し系植物育成アプリ
-- **ターゲット**: 癒しを求める植物愛好家、コードベースデザイン重視の開発者
+- **Interactive Plant Care** – Water, sun-bathe, and talk to your plants; each action affects their health, love and growth.
+- **Seasonal Plant Collection** – 9+ plant types spanning spring, summer, autumn and winter.
+- **Dynamic ASCII Art** – Plants visually change as they progress through growth stages.
+- **Gamification** – Achievement badges, confetti, sound effects 🎉
+- **Multilingual** – Full UI in **English** and **日本語**.
+- **PWA / Offline** – Service-worker powered; your garden lives even without the Internet.
+- **Data Backup & Restore** – Export / import your garden as JSON.
 
-### 🛠️ 技術スタック
+## Tech Stack
 
-**メインフレームワーク**
-- React 19 + TypeScript
-- Vite（高速開発サーバー）
+| Layer | Libraries |
+|-------|-----------|
+| UI    | React 18, TypeScript, Tailwind CSS, Framer-Motion |
+| State | Zustand |
+| Tooling | Vite, Vitest, Playwright |
+| PWA   | Workbox (service-worker) |
 
-**UIライブラリ**
-- shadcn/ui（Radix Primitives + Tailwind CSSベース）
-- 完全カスタマイズ可能、コンポーネント所有権概念
-
-**Liquid Glass実装**
-- gracefullight/liquid-glass（React & Tailwind専用）
-- albedim/apple-web-liquid-glass-demo（iOS 26スタイル）
-
-**アニメーション・状態管理**
-- Framer Motion：流動的なアニメーション
-- Zustand：軽量状態管理
-- React Query：データフェッチとキャッシュ
-
-**デプロイ環境**
-- Vercel（ゼロ設定自動デプロイ、エッジ配信）
-
-### 🌟 主な機能
-
-- 植物の育成（水やり、日光浴、話しかけ）
-- Liquid Glass UI エフェクト
-- 成長段階システム
-- 健康度・愛情レベル管理
-- インタラクティブなアニメーション
-
-### 🚀 開発環境セットアップ
+## Getting Started
 
 ```bash
-# 依存関係インストール
-npm install
+# 1. Clone
+$ git clone https://github.com/your-org/liquid-garden.git
+$ cd liquid-garden
 
-# 開発サーバー起動
-npm run dev
+# 2. Install dependencies
+$ npm install
 
-# ビルド
-npm run build
+# 3. Start dev server
+$ npm run dev
 
-# プレビュー
-npm run preview
+# 4. Open
+# Navigate to http://localhost:5173 in your browser
 ```
 
-### 📦 ESLint設定の拡張
+### Production Build
 
-本格的なプロダクション環境での開発には、型対応のlintルールの有効化を推奨：
-
-```js
-export default tseslint.config({
-  extends: [
-    ...tseslint.configs.recommendedTypeChecked,
-    ...tseslint.configs.strictTypeChecked,
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+$ npm run build
+$ npm run preview   # Local preview of the build output
 ```
 
-### 🎯 開発状況
+### Testing
 
-現在MVP（Minimum Viable Product）開発段階です。基本的な植物育成機能とLiquid Glass UIエフェクトが実装済み。
+```bash
+# Unit & component tests
+$ npm run test
 
-詳細な開発進捗は`TODO.md`をご参照ください。
+# End-to-end tests (Playwright)
+$ npm run test:e2e
+```
+
+## Folder Structure (~/src)
+
+```
+components/   – Reusable UI & plant-related components
+hooks/        – Custom React hooks (sound, confetti, etc.)
+data/         – Static configs (plant stats, release notes)
+stores/       – Zustand state stores
+utils/        – Helper utilities (i18n, personalities …)
+```
+
+## Contributing
+
+1. Fork the repo & create a feature branch.
+2. Follow the ESLint + Prettier rules.
+3. Add / update tests where appropriate.
+4. Submit a PR.
+
+## License
+
+MIT
