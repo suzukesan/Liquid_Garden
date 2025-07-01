@@ -51,16 +51,16 @@ const createNewPlant = (type: PlantType, language: Language): Plant => {
   
   // 植物タイプ別のランダムな名前（日英）
   const namesJa: Record<PlantType, string[]> = {
-    [PlantType.PACHIRA]: ['みどりちゃん', 'パッチー', 'リーフィ', 'わかば'],
-    [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
-    [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
-    [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
-    [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート'],
-    [PlantType.SPRING_SAKURA]: ['さくら', '花子', '桜子', 'チェリー'],
-    [PlantType.SUMMER_SUNFLOWER]: ['ひまわり', 'サニー', '陽子', 'ハナコ'],
-    [PlantType.AUTUMN_MAPLE]: ['もみじ', 'カエデ', '紅ちゃん', 'レッド'],
-    [PlantType.WINTER_POINSETTIA]: ['ポイン', 'レッドスター', 'ホーリー', 'ノエル']
-  }
+      [PlantType.PACHIRA]: ['みどりちゃん', 'パッチー', 'リーフィ', 'わかば'],
+      [PlantType.SANSEVIERIA]: ['サンちゃん', 'スリム', 'トラちゃん', 'シャープ'],
+      [PlantType.MONSTERA]: ['モンちゃん', 'ハート', 'あなあな', 'モンスター'],
+      [PlantType.RUBBER_TREE]: ['ゴムちゃん', 'ぷるぷる', 'ラバー', 'もちもち'],
+      [PlantType.KENTIA_PALM]: ['ヤシの実', 'トロピカル', 'パーム', 'リゾート'],
+      [PlantType.SPRING_SAKURA]: ['さくら', '花子', '桜子', 'チェリー'],
+      [PlantType.SUMMER_SUNFLOWER]: ['ひまわり', 'サニー', '陽子', 'ハナコ'],
+      [PlantType.AUTUMN_MAPLE]: ['もみじ', 'カエデ', '紅ちゃん', 'レッド'],
+      [PlantType.WINTER_POINSETTIA]: ['ポイン', 'レッドスター', 'ホーリー', 'ノエル']
+    }
 
   const namesEn: Record<PlantType, string[]> = {
     [PlantType.PACHIRA]: ['Leafy', 'Patchy', 'Greeny', 'Sprout'],

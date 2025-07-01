@@ -12,7 +12,10 @@ import ConfirmModal from '../ui/ConfirmModal'
 import PlantProgressChart from './PlantProgressChart'
 import { Progress } from '@/components/ui/progress'
 import { useConfetti } from '@/hooks/useConfetti'
-import WateringModal from '@/components/ui/WateringModal'
+import { useToast } from '@/hooks/useToast'
+import SunlightModal from './SunlightModal'
+import LoveModal from './LoveModal'
+
 
 interface PlantDetailViewProps {
   plant: Plant
@@ -20,7 +23,7 @@ interface PlantDetailViewProps {
 }
 
 const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
-  const { waterPlant, giveSunExposure, talkToPlant, removePlant, language } = usePlantStore()
+  const { waterPlant, giveSunExposure, talkToPlant, removePlant, language, updatePlantGrowth } = usePlantStore()
   const { 
     playWaterSound, 
     playSunlightSound, 
@@ -31,9 +34,11 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     isAmbientPlaying 
   } = useSoundEffects()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showWaterModal, setShowWaterModal] = useState(false)
   const [recentAction, setRecentAction] = useState<string | null>(null)
   const [isPlantReacting, setIsPlantReacting] = useState(false)
+  const [isProcessingAction, setIsProcessingAction] = useState(false)
+  const [showSunlightModal, setShowSunlightModal] = useState(false)
+  const [showLoveModal, setShowLoveModal] = useState(false)
   
   const personality = generatePlantPersonality(plant)
   const colors = generatePlantColors(plant, personality)
@@ -46,6 +51,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
   const heartControls = useAnimation()
 
   const { fire: fireConfetti } = useConfetti()
+  const { show: showToast } = useToast()
   const prevStageRef = useRef(plant.growthStage)
 
   // 植物の感情的なケア状態を計算
@@ -145,46 +151,57 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
   }
 
   const handleWater = async () => {
-    // 水滴アニメーション
-    await waterDropControls.start({
+    if (isProcessingAction) return
+    setIsProcessingAction(true)
+    
+    try {
+      waterDropControls.start({
       scale: [1, 1.3, 0.8, 1.2, 1],
       rotate: [0, -10, 10, -5, 0],
       filter: ['blur(0px)', 'blur(1px)', 'blur(0px)'],
       transition: { duration: 0.6, ease: "easeInOut" }
     })
     
-    // 心地よい水音を再生
-    setShowWaterModal(true)
+      playWaterSound()
+      
+    waterPlant(plant.id)
+    await triggerPlantReaction('water')
+      
+      showToast({ 
+        message: `${plant.name}${t('plant.happy_reaction', language)}`, 
+        emoji: '💧✨' 
+      })
+    } finally {
+      setTimeout(() => setIsProcessingAction(false), 500)
+    }
   }
 
   const handleSunlight = async () => {
-    // 太陽アニメーション
-    await sunlightControls.start({
-      scale: [1, 1.4, 1],
-      rotate: [0, 180, 360],
-      filter: ['brightness(1)', 'brightness(2)', 'brightness(1)'],
-      transition: { duration: 0.8, ease: "easeInOut" }
-    })
+    setShowSunlightModal(true)
+    playUISound('click')
+  }
+
+  const handleSunlightComplete = () => {
+    // 成長チェック（日光浴後）
+    setTimeout(() => {
+      updatePlantGrowth(plant.id)
+    }, 500)
     
-    // キラキラ音を再生
-    await playSunlightSound()
-    giveSunExposure(plant.id)
-    await triggerPlantReaction('sun')
+    triggerPlantReaction('sun')
   }
 
   const handleTalk = async () => {
-    // ハートアニメーション
-    await heartControls.start({
-      scale: [1, 1.5, 1.2, 1],
-      opacity: [1, 0.8, 1],
-      y: [0, -10, 0],
-      transition: { duration: 0.7, ease: "easeInOut" }
-    })
+    setShowLoveModal(true)
+    playUISound('click')
+  }
+
+  const handleLoveComplete = () => {
+    // 成長チェック（愛情表現後）
+    setTimeout(() => {
+      updatePlantGrowth(plant.id)
+    }, 500)
     
-    // 愛情のチャイム音を再生
-    await playLoveSound()
-    talkToPlant(plant.id)
-    await triggerPlantReaction('talk')
+    triggerPlantReaction('talk')
   }
 
   const handleDelete = () => {
@@ -286,7 +303,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
     }
   }, [plant.growthStage, fireConfetti])
 
-  const closeWaterModal = () => setShowWaterModal(false)
+
 
   return (
     <div className="min-h-screen p-6" style={{
@@ -360,14 +377,7 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             className="absolute top-6 right-6"
           />
 
-          {/* Watering modal */}
-          {showWaterModal && (
-            <WateringModal 
-              plant={plant}
-              onClose={closeWaterModal}
-              onWaterComplete={() => triggerPlantReaction('water')}
-            />
-          )}
+
 
           {/* 植物の中央表示 - 生命の呼吸と反応 */}
           <div className="text-center space-y-6">
@@ -494,22 +504,24 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             <div className="space-y-3">
               <motion.button
                 animate={waterDropControls}
-                disabled={!emotionalCare.water.isActive}
+                disabled={!emotionalCare.water.isActive || isProcessingAction}
                 className={`w-full p-6 rounded-3xl text-center overflow-hidden transition-all duration-300 ${
                   emotionalCare.water.urgency === 'urgent' || emotionalCare.water.urgency === 'needed'
                     ? 'bg-blue-100 border-2 border-blue-300 shadow-lg'
                     : 'bg-white bg-opacity-60 border-2 border-white border-opacity-30'
                 } ${
-                  !emotionalCare.water.isActive 
+                  !emotionalCare.water.isActive || isProcessingAction
                     ? 'opacity-60 cursor-not-allowed' 
                     : 'hover:shadow-lg cursor-pointer'
+                } ${
+                  isProcessingAction ? 'animate-pulse' : ''
                 }`}
                 style={{
                   backdropFilter: 'blur(12px)',
                 }}
-                whileHover={emotionalCare.water.isActive ? { scale: 1.02, y: -4 } : {}}
-                whileTap={emotionalCare.water.isActive ? { scale: 0.98 } : {}}
-                onClick={emotionalCare.water.isActive ? handleWater : undefined}
+                whileHover={emotionalCare.water.isActive && !isProcessingAction ? { scale: 1.02, y: -4 } : {}}
+                whileTap={emotionalCare.water.isActive && !isProcessingAction ? { scale: 0.98 } : {}}
+                onClick={emotionalCare.water.isActive && !isProcessingAction ? handleWater : undefined}
                 aria-label="水やりボタン"
               >
                 <motion.div
@@ -556,22 +568,24 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             <div className="space-y-3">
               <motion.button
                 animate={sunlightControls}
-                disabled={!emotionalCare.sun.isActive}
+                disabled={!emotionalCare.sun.isActive || isProcessingAction}
                 className={`w-full p-6 rounded-3xl text-center overflow-hidden transition-all duration-300 ${
                   emotionalCare.sun.urgency === 'urgent' || emotionalCare.sun.urgency === 'needed'
                     ? 'bg-yellow-100 border-2 border-yellow-300 shadow-lg'
                     : 'bg-white bg-opacity-60 border-2 border-white border-opacity-30'
                 } ${
-                  !emotionalCare.sun.isActive 
+                  !emotionalCare.sun.isActive || isProcessingAction
                     ? 'opacity-60 cursor-not-allowed' 
                     : 'hover:shadow-lg cursor-pointer'
+                } ${
+                  isProcessingAction ? 'animate-pulse' : ''
                 }`}
                 style={{
                   backdropFilter: 'blur(12px)',
                 }}
-                whileHover={emotionalCare.sun.isActive ? { scale: 1.02, y: -4 } : {}}
-                whileTap={emotionalCare.sun.isActive ? { scale: 0.98 } : {}}
-                onClick={emotionalCare.sun.isActive ? handleSunlight : undefined}
+                whileHover={emotionalCare.sun.isActive && !isProcessingAction ? { scale: 1.02, y: -4 } : {}}
+                whileTap={emotionalCare.sun.isActive && !isProcessingAction ? { scale: 0.98 } : {}}
+                onClick={emotionalCare.sun.isActive && !isProcessingAction ? handleSunlight : undefined}
                 aria-label="日光浴ボタン"
               >
                 <motion.div
@@ -616,22 +630,24 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
             <div className="space-y-3">
               <motion.button
                 animate={heartControls}
-                disabled={!emotionalCare.talk.isActive}
+                disabled={!emotionalCare.talk.isActive || isProcessingAction}
                 className={`w-full p-6 rounded-3xl text-center overflow-hidden transition-all duration-300 ${
                   emotionalCare.talk.urgency === 'urgent' || emotionalCare.talk.urgency === 'needed'
                     ? 'bg-pink-100 border-2 border-pink-300 shadow-lg'
                     : 'bg-white bg-opacity-60 border-2 border-white border-opacity-30'
                 } ${
-                  !emotionalCare.talk.isActive 
+                  !emotionalCare.talk.isActive || isProcessingAction
                     ? 'opacity-60 cursor-not-allowed' 
                     : 'hover:shadow-lg cursor-pointer'
+                } ${
+                  isProcessingAction ? 'animate-pulse' : ''
                 }`}
                 style={{
                   backdropFilter: 'blur(12px)',
                 }}
-                whileHover={emotionalCare.talk.isActive ? { scale: 1.02, y: -4 } : {}}
-                whileTap={emotionalCare.talk.isActive ? { scale: 0.98 } : {}}
-                onClick={emotionalCare.talk.isActive ? handleTalk : undefined}
+                whileHover={emotionalCare.talk.isActive && !isProcessingAction ? { scale: 1.02, y: -4 } : {}}
+                whileTap={emotionalCare.talk.isActive && !isProcessingAction ? { scale: 0.98 } : {}}
+                onClick={emotionalCare.talk.isActive && !isProcessingAction ? handleTalk : undefined}
                 aria-label="話しかけるボタン"
               >
                 <motion.div
@@ -711,31 +727,59 @@ const PlantDetailView: React.FC<PlantDetailViewProps> = ({ plant, onBack }) => {
       <div className="md:hidden fixed bottom-0 left-0 w-full p-4 bg-white/70 backdrop-blur-md border-t border-white/30 pointer-events-auto">
         <div className="flex justify-around gap-3">
           <motion.button
-            className="flex-1 py-3 rounded-2xl bg-blue-100 text-blue-700 font-semibold disabled:opacity-40"
-            disabled={!emotionalCare.water.isActive}
-            whileHover={emotionalCare.water.isActive ? { scale: 1.05 } : {}}
-            whileTap={emotionalCare.water.isActive ? { scale: 0.95 } : {}}
-            onClick={emotionalCare.water.isActive ? handleWater : undefined}
+            className={`flex-1 py-3 rounded-2xl bg-blue-100 text-blue-700 font-semibold disabled:opacity-40 ${
+              isProcessingAction ? 'animate-pulse' : ''
+            }`}
+            disabled={!emotionalCare.water.isActive || isProcessingAction}
+            whileHover={emotionalCare.water.isActive && !isProcessingAction ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.water.isActive && !isProcessingAction ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.water.isActive && !isProcessingAction ? handleWater : undefined}
             aria-label="水やりボタン(モバイル)"
           >💧</motion.button>
           <motion.button
-            className="flex-1 py-3 rounded-2xl bg-yellow-100 text-yellow-700 font-semibold disabled:opacity-40"
-            disabled={!emotionalCare.sun.isActive}
-            whileHover={emotionalCare.sun.isActive ? { scale: 1.05 } : {}}
-            whileTap={emotionalCare.sun.isActive ? { scale: 0.95 } : {}}
-            onClick={emotionalCare.sun.isActive ? handleSunlight : undefined}
+            className={`flex-1 py-3 rounded-2xl bg-yellow-100 text-yellow-700 font-semibold disabled:opacity-40 ${
+              isProcessingAction ? 'animate-pulse' : ''
+            }`}
+            disabled={!emotionalCare.sun.isActive || isProcessingAction}
+            whileHover={emotionalCare.sun.isActive && !isProcessingAction ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.sun.isActive && !isProcessingAction ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.sun.isActive && !isProcessingAction ? handleSunlight : undefined}
             aria-label="日光浴ボタン(モバイル)"
           >☀️</motion.button>
           <motion.button
-            className="flex-1 py-3 rounded-2xl bg-pink-100 text-pink-700 font-semibold disabled:opacity-40"
-            disabled={!emotionalCare.talk.isActive}
-            whileHover={emotionalCare.talk.isActive ? { scale: 1.05 } : {}}
-            whileTap={emotionalCare.talk.isActive ? { scale: 0.95 } : {}}
-            onClick={emotionalCare.talk.isActive ? handleTalk : undefined}
+            className={`flex-1 py-3 rounded-2xl bg-pink-100 text-pink-700 font-semibold disabled:opacity-40 ${
+              isProcessingAction ? 'animate-pulse' : ''
+            }`}
+            disabled={!emotionalCare.talk.isActive || isProcessingAction}
+            whileHover={emotionalCare.talk.isActive && !isProcessingAction ? { scale: 1.05 } : {}}
+            whileTap={emotionalCare.talk.isActive && !isProcessingAction ? { scale: 0.95 } : {}}
+            onClick={emotionalCare.talk.isActive && !isProcessingAction ? handleTalk : undefined}
             aria-label="話しかけるボタン(モバイル)"
           >💕</motion.button>
         </div>
       </div>
+
+      {/* 日光浴モーダル */}
+      <AnimatePresence>
+        {showSunlightModal && (
+          <SunlightModal
+            plant={plant}
+            onClose={() => setShowSunlightModal(false)}
+            onSunlightComplete={handleSunlightComplete}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* 愛情表現モーダル */}
+      <AnimatePresence>
+        {showLoveModal && (
+          <LoveModal
+            plant={plant}
+            onClose={() => setShowLoveModal(false)}
+            onLoveComplete={handleLoveComplete}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
